@@ -83,8 +83,8 @@ h3{font:600 20px/1.25 var(--display);margin:0 0 14px}
   background:var(--mp);color:var(--mt);font:inherit;transition:transform .2s}
 .marca:hover{transform:translateY(-3px)}
 .marca::after{content:"";position:absolute;right:-40px;bottom:-40px;width:160px;height:160px;border-radius:50%;background:var(--mt);opacity:.07}
-.marca-logo{flex:1;display:grid;place-items:center;min-height:110px}
-.marca-logo img{max-height:120px;max-width:72%;object-fit:contain}
+.marca-logo{flex:1;position:relative;display:grid;place-items:center;min-height:140px;margin:6px 8px}
+.marca-logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .iniciales{font:800 64px/1 var(--display);letter-spacing:-.04em;opacity:.9}
 .nombre-grande{font:700 clamp(28px,3.4vw,44px)/1.02 var(--display);letter-spacing:-.03em;text-align:center;text-wrap:balance;max-width:14ch}
 .mosaico .marca:nth-child(5n+1) .nombre-grande{font-size:clamp(34px,4.6vw,60px)}
@@ -139,7 +139,7 @@ input[type=checkbox]{width:auto;display:inline-block;margin:0 8px 0 0;accent-col
 .cerrar{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;border:0;background:rgba(0,0,0,.18);color:inherit;font-size:24px;line-height:1;cursor:pointer;z-index:2}
 .fila-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;margin-top:8px}
 .ficha-cab{background:var(--mp);color:var(--mt);padding:34px 28px 28px;display:flex;gap:20px;align-items:center}
-.ficha-cab img{width:96px;height:96px;object-fit:contain}
+.ficha-cab img{width:160px;height:110px;object-fit:contain;flex:0 0 auto}
 .ficha-cab .iniciales{font-size:52px}
 .ficha-cab h2{color:inherit}
 .ficha-cab p{margin:6px 0 0;opacity:.8}
@@ -500,8 +500,14 @@ function renderPublico() {
   renderDias(); renderHoras(); renderResumen();
   renderContacto();
 }
+const sorteo = {};
+function claveSorteo(id) { if (!(id in sorteo)) sorteo[id] = Math.random(); return sorteo[id]; }
+function marcasEnPagina() {
+  const visibles = D.marcas.filter(m => m.visible !== 'no');
+  return cfg('orden_marcas', 'aleatorio') === 'manual' ? ordenar(visibles) : visibles.slice().sort((a, b) => claveSorteo(a.id) - claveSorteo(b.id));
+}
 function renderMosaico() {
-  const marcas = ordenar(D.marcas.filter(m => m.visible !== 'no'));
+  const marcas = marcasEnPagina();
   $('marcasConteo').textContent = marcas.length ? (marcas.length === 1 ? '1 marca' : marcas.length + ' marcas') + '. Toca una para conocerla.' : '';
   $('mosaico').innerHTML = marcas.length ? marcas.map(m => {
     const p = colorValido(m.color_primario, '#d4b3ef');
@@ -536,7 +542,7 @@ function abrirFicha(id) {
 }
 function renderSelects() {
   const actual = $('fMarca').value;
-  const marcas = ordenar(D.marcas.filter(m => m.visible !== 'no'));
+  const marcas = D.marcas.filter(m => m.visible !== 'no').sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
   $('fMarca').innerHTML = '<option value="General">General o varias marcas</option>' + marcas.map(m => `<option value="${esc(m.nombre)}">${esc(m.nombre)}</option>`).join('');
   if (actual) $('fMarca').value = actual;
   if (!$('fMarca').value) $('fMarca').value = 'General';
@@ -943,13 +949,37 @@ async function descargarExcel() {
 }
 
 /* ---------- Imágenes ---------- */
-function comprimir(file, max, tipo, calidad) {
+// Quita el margen vacío alrededor de un logo (transparente o del mismo color que la esquina)
+function recortarBordes(origen) {
+  const w = origen.width, h = origen.height, ctx = origen.getContext('2d');
+  const px = ctx.getImageData(0, 0, w, h).data;
+  const r0 = px[0], g0 = px[1], b0 = px[2], a0 = px[3];
+  const vacio = i => (a0 < 16 ? px[i + 3] < 16 : (px[i + 3] > 200 && Math.abs(px[i] - r0) + Math.abs(px[i + 1] - g0) + Math.abs(px[i + 2] - b0) < 36));
+  let x1 = w, y1 = h, x2 = -1, y2 = -1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    if (!vacio((y * w + x) * 4)) { if (x < x1) x1 = x; if (x > x2) x2 = x; if (y < y1) y1 = y; if (y > y2) y2 = y; }
+  }
+  if (x2 < 0) return origen;
+  const m = Math.round(Math.max(x2 - x1, y2 - y1) * .03);
+  x1 = Math.max(0, x1 - m); y1 = Math.max(0, y1 - m); x2 = Math.min(w - 1, x2 + m); y2 = Math.min(h - 1, y2 + m);
+  const c = document.createElement('canvas'); c.width = x2 - x1 + 1; c.height = y2 - y1 + 1;
+  c.getContext('2d').drawImage(origen, x1, y1, c.width, c.height, 0, 0, c.width, c.height);
+  return c;
+}
+function comprimir(file, max, tipo, calidad, recortar) {
   return new Promise((ok, mal) => {
     const img = new Image(), u = URL.createObjectURL(file);
     img.onload = () => {
-      const k = Math.min(1, max / Math.max(img.width, img.height));
-      const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u); ok(c.toDataURL(tipo, calidad));
+      let fuente = img, fw = img.width, fh = img.height;
+      if (recortar) {
+        const k0 = Math.min(1, 1400 / Math.max(fw, fh));
+        const t = document.createElement('canvas'); t.width = Math.round(fw * k0); t.height = Math.round(fh * k0);
+        t.getContext('2d').drawImage(img, 0, 0, t.width, t.height);
+        fuente = recortarBordes(t); fw = fuente.width; fh = fuente.height;
+      }
+      const k = Math.min(1, max / Math.max(fw, fh));
+      const c = document.createElement('canvas'); c.width = Math.round(fw * k); c.height = Math.round(fh * k);
+      c.getContext('2d').drawImage(fuente, 0, 0, c.width, c.height); URL.revokeObjectURL(u); ok(c.toDataURL(tipo, calidad));
     };
     img.onerror = () => mal(new Error('No se pudo leer la imagen'));
     img.src = u;
@@ -957,7 +987,7 @@ function comprimir(file, max, tipo, calidad) {
 }
 async function subirImagen(file, esLogo) {
   const tipo = esLogo ? 'image/png' : 'image/jpeg';
-  const dataUrl = await comprimir(file, esLogo ? 500 : 900, tipo, .72);
+  const dataUrl = await comprimir(file, esLogo ? 600 : 900, tipo, .72, esLogo);
   if (MODO_DEMO) return dataUrl;
   const res = await enviarYLeer({ accion: 'subirImagen', pin: A.pin, data: dataUrl.split(',')[1], mime: tipo, nombre: file.name.replace(/\.[^.]+$/, '') + (esLogo ? '.png' : '.jpg') });
   if (!res.ok) throw new Error(res.error || 'No se pudo subir');
@@ -991,7 +1021,7 @@ document.addEventListener('input', e => {
 function renderTabMarcas() {
   const marcas = ordenar(D.marcas);
   $('tab-marcas').innerHTML = `<div class="herramientas"><button class="btn btn-p btn-sm" data-accm="nueva">Nueva marca</button>
-    <span class="suave">Las marcas se muestran en el orden indicado. Las ocultas no aparecen en la página.</span></div>
+    <span class="suave">${cfg('orden_marcas', 'aleatorio') === 'manual' ? 'Las marcas se muestran según el número de orden.' : 'Las marcas se muestran en orden aleatorio en cada visita.'} Puedes cambiarlo en Configuración. Las ocultas no aparecen en la página.</span></div>
     <div class="lista-admin">${marcas.map(m => {
       const p = colorValido(m.color_primario, '#d4b3ef');
       const n = D.productos.filter(x => x.marca_id === m.id).length;
@@ -1156,6 +1186,12 @@ function renderTabConfig() {
       ${area('texto_intro', 'Texto de presentación', 3)}
       ${area('texto_nosotros', 'Sección «Quiénes somos» <span class="opc">(si la dejas vacía, no se muestra)</span>', 4)}
       ${campoImagen('cLogo', cfg('logo_url'), 'Subir logo', true).replace('id="cLogo"', 'id="cLogo" data-clave="logo_url"')}
+    </div>
+    <div class="bloque-cfg"><h3>Marcas en la página</h3><p>En orden aleatorio, cada visitante ve las marcas en una posición distinta y la tarjeta destacada cambia.</p>
+      <label>Orden de las marcas<select data-clave="orden_marcas">
+        <option value="aleatorio"${cfg('orden_marcas', 'aleatorio') !== 'manual' ? ' selected' : ''}>Aleatorio en cada visita</option>
+        <option value="manual"${cfg('orden_marcas', 'aleatorio') === 'manual' ? ' selected' : ''}>Según el número de orden de cada marca</option>
+      </select></label>
     </div>
     <div class="bloque-cfg"><h3>Colores de la página</h3><p>Tómalos del logo. Cada marca usa sus propios colores en su ficha.</p>
       <div class="rejilla">${color('color_fondo', 'Fondo', '#1f1526')}${color('color_fondo_2', 'Fondo secundario', '#2c1f36')}${color('color_acento', 'Acento (botones)', '#d4b3ef')}${color('color_texto', 'Texto', '#f4eef7')}</div>
