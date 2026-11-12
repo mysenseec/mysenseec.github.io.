@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Sense Ec</title>
+<meta name="description" content="Conoce las marcas de My Sense Ec y agenda una asesoría personalizada.">
+<meta name="theme-color" content="#1f1526" id="metaTema">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root{
+  --bg:#1f1526; --bg2:#2c1f36; --acento:#d4b3ef; --texto:#f4eef7; --sobre-acento:#1f1526;
+  --suave:color-mix(in srgb, var(--texto) 68%, transparent);
+  --linea:color-mix(in srgb, var(--texto) 16%, transparent);
+  --velo:color-mix(in srgb, var(--texto) 6%, transparent);
+  --display:'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --cuerpo:'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ancho:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{margin:0;min-height:100vh;color:var(--texto);font:400 17px/1.55 var(--cuerpo);-webkit-font-smoothing:antialiased;
+  background:radial-gradient(1100px 620px at 88% -8%, var(--bg2), transparent 62%), radial-gradient(800px 500px at -10% 110%, var(--bg2), transparent 60%), var(--bg);
+  background-attachment:fixed;padding-bottom:env(safe-area-inset-bottom,0px)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.09;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+body.sin-scroll{overflow:hidden}
+a{color:inherit}
+img{max-width:100%}
+:focus-visible{outline:2px solid var(--acento);outline-offset:3px;border-radius:6px}
+.saltar{position:absolute;left:-999px;top:8px;background:var(--acento);color:var(--sobre-acento);padding:8px 14px;border-radius:8px;z-index:99}
+.saltar:focus{left:12px}
+[hidden]{display:none!important}
+
+/* Cabecera */
+.cabecera{position:sticky;top:0;z-index:20;padding-top:env(safe-area-inset-top,0px);background:color-mix(in srgb, var(--bg) 82%, transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--linea)}
+.cab-in{max-width:var(--ancho);margin:0 auto;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo-btn{background:none;border:0;padding:0;cursor:pointer;color:var(--texto);display:flex;align-items:center;min-height:44px}
+.logo-btn img{height:42px;width:auto;display:block}
+.marca-texto{font:800 22px/1 var(--display);letter-spacing:-.02em}
+.nav{display:flex;align-items:center;gap:22px;font-weight:500}
+.nav a:not(.btn){text-decoration:none;color:var(--suave)}
+.nav a:not(.btn):hover{color:var(--texto)}
+@media (max-width:720px){.nav a:not(.btn){display:none}}
+
+/* Botones */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:11px 22px;border-radius:999px;border:1px solid var(--linea);background:transparent;color:var(--texto);font:600 15px/1.2 var(--cuerpo);text-decoration:none;cursor:pointer;transition:background .15s,transform .15s}
+.btn:hover{background:var(--velo)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn-p{background:var(--acento);color:var(--sobre-acento);border-color:transparent}
+.btn-p:hover{background:color-mix(in srgb, var(--acento) 86%, var(--texto))}
+.btn-sm{min-height:38px;padding:8px 16px;font-size:14px}
+.btn-xs{min-height:32px;padding:5px 12px;font-size:13px}
+.btn-ancho{width:100%}
+.btn-peligro{color:#ffb4b4;border-color:color-mix(in srgb,#ff8080 40%,transparent)}
+.enlace{color:var(--acento);font-weight:600}
+
+/* Estructura */
+main{position:relative;z-index:1}
+.envoltura{max-width:var(--ancho);margin:0 auto;padding:0 22px}
+.aviso{max-width:var(--ancho);margin:16px auto 0;padding:12px 18px;border:1px dashed var(--acento);border-radius:12px;color:var(--suave);font-size:15px}
+.hero{max-width:var(--ancho);margin:0 auto;padding:clamp(56px,10vw,120px) 22px clamp(40px,6vw,72px)}
+.hero h1{font:800 clamp(46px,8.4vw,112px)/.93 var(--display);letter-spacing:-.035em;margin:0;max-width:11ch;text-wrap:balance}
+.intro{font-size:clamp(18px,2vw,21px);color:var(--suave);max-width:46ch;margin:28px 0 34px}
+.acciones{display:flex;flex-wrap:wrap;gap:12px}
+.seccion{max-width:var(--ancho);margin:0 auto;padding:clamp(48px,7vw,88px) 22px}
+.sec-cab{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;margin-bottom:28px}
+h2{font:700 clamp(30px,4.4vw,48px)/1.05 var(--display);letter-spacing:-.025em;margin:0}
+h3{font:600 20px/1.25 var(--display);margin:0 0 14px}
+.suave{color:var(--suave)}
+.prosa{max-width:62ch;white-space:pre-line}
+
+/* Mosaico de marcas */
+.mosaico{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));grid-auto-flow:dense;gap:14px}
+@media (min-width:760px){.mosaico .marca:nth-child(5n+1){grid-column:span 2}}
+.marca{position:relative;min-height:260px;border:0;border-radius:18px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;text-align:left;cursor:pointer;overflow:hidden;
+  background:var(--mp);color:var(--mt);font:inherit;transition:transform .2s}
+.marca:hover{transform:translateY(-3px)}
+.marca::after{content:"";position:absolute;right:-40px;bottom:-40px;width:160px;height:160px;border-radius:50%;background:var(--mt);opacity:.07}
+.marca-logo{flex:1;display:grid;place-items:center;min-height:110px}
+.marca-logo img{max-height:120px;max-width:72%;object-fit:contain}
+.iniciales{font:800 64px/1 var(--display);letter-spacing:-.04em;opacity:.9}
+.marca-nombre{display:block;font:700 26px/1.1 var(--display);letter-spacing:-.02em}
+.marca-slogan{display:block;font-size:15px;opacity:.78;margin-top:4px}
+
+/* Agenda */
+.agenda{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:860px){.agenda{grid-template-columns:minmax(0,1fr)}}
+.panel{min-width:0;background:var(--velo);border:1px solid var(--linea);border-radius:20px;padding:24px}
+.num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--acento);color:var(--sobre-acento);font:700 14px var(--cuerpo);margin-right:8px;vertical-align:2px}
+.dias{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 12px;margin-bottom:22px;scroll-snap-type:x mandatory}
+.chip{border:1px solid var(--linea);background:transparent;color:var(--texto);font:500 15px var(--cuerpo);border-radius:12px;padding:10px 14px;cursor:pointer;min-height:44px}
+.chip:hover{background:var(--velo)}
+.chip.activo{background:var(--acento);color:var(--sobre-acento);border-color:transparent}
+.dia{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;min-width:70px;scroll-snap-align:start;line-height:1.15}
+.dia .dsem{font-size:13px;opacity:.8;text-transform:capitalize}
+.dia .dnum{font:700 24px/1.1 var(--display)}
+.dia .dmes{font-size:13px;opacity:.8}
+.horas{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.resumen{padding:12px 14px;border-radius:12px;background:color-mix(in srgb, var(--acento) 16%, transparent);font-weight:500;margin:0 0 18px}
+label{display:block;font-size:14px;font-weight:600;margin-bottom:14px}
+.opc{font-weight:400;color:var(--suave)}
+input,select,textarea{display:block;width:100%;margin-top:6px;padding:12px 14px;border-radius:12px;border:1px solid var(--linea);background:var(--velo);color:var(--texto);font:400 16px/1.4 var(--cuerpo)}
+textarea{resize:vertical}
+select option{color:#1b1b1b}
+input[type=color]{padding:4px;height:44px;cursor:pointer}
+input[type=checkbox]{width:auto;display:inline-block;margin:0 8px 0 0;accent-color:var(--acento);transform:scale(1.15)}
+.check{display:flex;align-items:flex-start;font-weight:400;color:var(--suave);gap:2px}
+.check input{margin-top:4px}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media (max-width:520px){.dos{grid-template-columns:1fr}}
+.trampa{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.error{color:#ffc2c2;background:color-mix(in srgb,#ff6b6b 14%,transparent);padding:10px 14px;border-radius:10px;font-size:15px}
+.listo{max-width:620px}
+.listo h3{font-size:30px;letter-spacing:-.02em}
+
+/* Contacto */
+.contacto{display:grid;grid-template-columns:1fr 1.3fr;gap:24px;align-items:start}
+@media (max-width:860px){.contacto{grid-template-columns:1fr}}
+.dato{margin:0 0 18px}
+.dato b{display:block;font-size:14px;color:var(--suave);font-weight:600}
+.mapa{height:320px;border-radius:18px;overflow:hidden;border:1px solid var(--linea)}
+.pie{position:relative;z-index:1;max-width:var(--ancho);margin:0 auto;padding:28px 22px 40px;border-top:1px solid var(--linea);color:var(--suave);font-size:14px}
+
+/* Modales */
+.modal-fondo{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.6)}
+.modal-fondo.abierto{display:flex}
+.modal{position:relative;width:min(780px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--bg2);color:var(--texto);border-radius:22px;border:1px solid var(--linea)}
+.modal-chico{width:min(420px,100%);padding:26px}
+.modal-medio{padding:26px}
+.cerrar{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;border:0;background:rgba(0,0,0,.18);color:inherit;font-size:24px;line-height:1;cursor:pointer;z-index:2}
+.fila-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;margin-top:8px}
+.ficha-cab{background:var(--mp);color:var(--mt);padding:34px 28px 28px;display:flex;gap:20px;align-items:center}
+.ficha-cab img{width:96px;height:96px;object-fit:contain}
+.ficha-cab .iniciales{font-size:52px}
+.ficha-cab h2{color:inherit}
+.ficha-cab p{margin:6px 0 0;opacity:.8}
+.ficha-cuerpo{background:var(--ms);color:var(--mst);padding:28px}
+.productos{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin:6px 0 26px}
+.producto{border-radius:14px;overflow:hidden;background:color-mix(in srgb, var(--mst) 7%, transparent)}
+.producto img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.producto div{padding:12px 14px}
+.producto b{display:block;font-size:16px}
+.producto span{font-size:14px;opacity:.78}
+.ficha-acciones{display:flex;flex-wrap:wrap;gap:10px}
+.btn-marca{background:var(--mp);color:var(--mt);border-color:transparent}
+.btn-marca-sec{border-color:color-mix(in srgb, var(--mst) 30%, transparent);color:var(--mst)}
+
+/* Panel de administración */
+.admin{position:fixed;inset:0;z-index:40;overflow:auto;background:var(--bg);padding-top:env(safe-area-inset-top,0px)}
+.admin-cab{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px 22px;background:var(--bg2);border-bottom:1px solid var(--linea)}
+.tabs{display:flex;gap:6px;overflow-x:auto}
+.tab{border:0;background:transparent;color:var(--suave);font:600 15px var(--cuerpo);padding:9px 14px;border-radius:10px;cursor:pointer;white-space:nowrap}
+.tab.activo{background:var(--velo);color:var(--texto)}
+.admin-cuerpo{max-width:1400px;margin:0 auto;padding:24px 22px 60px}
+.herramientas{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px}
+.herramientas input,.herramientas select{width:auto;min-width:200px;margin:0}
+.metricas{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.metrica{border:1px solid var(--linea);border-radius:14px;padding:14px 16px}
+.metrica b{display:block;font:700 30px/1.1 var(--display)}
+.metrica span{font-size:14px;color:var(--suave)}
+.tabla-env{overflow-x:auto;border:1px solid var(--linea);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--linea);text-align:left;vertical-align:top;white-space:nowrap}
+th{position:sticky;top:0;background:var(--bg2);font-weight:600;color:var(--suave)}
+td.largo{white-space:normal;min-width:220px;max-width:340px}
+td select{margin:0;padding:6px 10px;font-size:14px;width:auto}
+.acc{display:flex;gap:6px}
+.lista-admin{display:grid;gap:10px}
+.item-admin{display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--linea);border-radius:14px;flex-wrap:wrap}
+.muestra{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;overflow:hidden;flex:0 0 auto}
+.muestra img{max-width:80%;max-height:80%;object-fit:contain}
+.item-admin .crece{flex:1;min-width:160px}
+.etiqueta{font-size:12px;padding:2px 9px;border-radius:999px;border:1px solid var(--linea);color:var(--suave)}
+.bloque-cfg{border:1px solid var(--linea);border-radius:18px;padding:22px;margin-bottom:18px}
+.bloque-cfg h3{margin-bottom:6px}
+.bloque-cfg > p{margin:0 0 16px;color:var(--suave);font-size:15px}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0 16px}
+.dias-check{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:16px}
+.dias-check label{display:flex;align-items:center;font-weight:500;margin:0}
+.img-campo{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.img-prev{width:84px;height:84px;border-radius:14px;border:1px dashed var(--linea);display:grid;place-items:center;overflow:hidden;background:var(--velo);font-size:12px;color:var(--suave);text-align:center}
+.img-prev img{max-width:100%;max-height:100%;object-fit:contain}
+.archivo{position:relative;overflow:hidden}
+.archivo input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--texto);color:var(--bg);padding:12px 20px;border-radius:999px;font-weight:600;z-index:90;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.leaflet-container{font:inherit}
+</style>
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+
+<header class="cabecera">
+  <div class="cab-in">
+    <button class="logo-btn" id="logoBtn" aria-label="Logo"><span id="logoZona"><span class="marca-texto">My Sense Ec</span></span></button>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#marcas">Marcas</a>
+      <a href="#nosotros" id="navNosotros" hidden>Nosotros</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#agenda" class="btn btn-p btn-sm">Agendar cita</a>
+    </nav>
+  </div>
+</header>
+
+<main id="principal">
+  <div id="aviso" class="aviso" hidden></div>
+
+  <section class="hero">
+    <h1 id="titular">Marcas para cada sentido</h1>
+    <p id="intro" class="intro"></p>
+    <div class="acciones">
+      <a href="#agenda" class="btn btn-p">Agendar una asesoría</a>
+      <a href="#marcas" class="btn">Ver las marcas</a>
+    </div>
+  </section>
+
+  <section id="marcas" class="seccion">
+    <div class="sec-cab"><h2>Nuestras marcas</h2><p class="suave" id="marcasConteo"></p></div>
+    <div class="mosaico" id="mosaico"></div>
+  </section>
+
+  <section id="nosotros" class="seccion" hidden>
+    <div class="sec-cab"><h2>Quiénes somos</h2></div>
+    <p id="nosotrosTexto" class="prosa intro"></p>
+  </section>
+
+  <section id="agenda" class="seccion">
+    <div class="sec-cab"><h2>Agenda una asesoría</h2><p class="suave" id="agendaSub">Elige el día y la hora. Te atiende directamente nuestro equipo.</p></div>
+    <div id="agendaCuerpo" class="agenda">
+      <div class="panel">
+        <h3><span class="num">1</span>Elige el día</h3>
+        <div id="dias" class="dias"></div>
+        <h3><span class="num">2</span>Elige la hora</h3>
+        <div id="horas" class="horas"></div>
+      </div>
+      <form id="formCita" class="panel" novalidate>
+        <h3><span class="num">3</span>Tus datos</h3>
+        <p id="resumenCita" class="resumen">Aún no eliges día y hora.</p>
+        <label>Nombre y apellido<input id="fNombre" autocomplete="name"></label>
+        <div class="dos">
+          <label>Celular<input id="fCelular" type="tel" inputmode="tel" autocomplete="tel" placeholder="09…"></label>
+          <label>Correo <span class="opc">(opcional)</span><input id="fCorreo" type="email" autocomplete="email"></label>
+        </div>
+        <label>Empresa <span class="opc">(opcional)</span><input id="fEmpresa" autocomplete="organization"></label>
+        <div class="dos">
+          <label>Marca de interés<select id="fMarca"></select></label>
+          <label id="lblModalidad">Modalidad<select id="fModalidad"></select></label>
+        </div>
+        <label>¿En qué te podemos ayudar? <span class="opc">(opcional)</span><textarea id="fMotivo" rows="3"></textarea></label>
+        <input id="fSitio" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="check"><input type="checkbox" id="fConsent"><span>Autorizo a <span class="nEmpresa">My Sense Ec</span> a usar mis datos solo para coordinar esta cita.</span></label>
+        <p id="errorCita" class="error" hidden></p>
+        <button type="submit" class="btn btn-p btn-ancho" id="btnAgendar">Agendar cita</button>
+      </form>
+    </div>
+    <div id="agendaListo" class="listo panel" hidden></div>
+  </section>
+
+  <section id="contacto" class="seccion">
+    <div class="sec-cab"><h2>Contacto</h2></div>
+    <div class="contacto">
+      <div id="contactoDatos"></div>
+      <div id="mapaPublico" class="mapa" hidden></div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie"><span id="pieTexto"></span></footer>
+
+<!-- Ficha de marca -->
+<div class="modal-fondo" id="fichaModal"><div class="modal" role="dialog" aria-modal="true" aria-label="Ficha de la marca" id="fichaContenido"></div></div>
+
+<!-- PIN -->
+<div class="modal-fondo" id="pinModal">
+  <div class="modal modal-chico" role="dialog" aria-modal="true" aria-labelledby="pinTitulo">
+    <h3 id="pinTitulo">Acceso del equipo</h3>
+    <form id="pinForm">
+      <label>PIN<input id="pinInput" type="password" inputmode="numeric" autocomplete="off"></label>
+      <p id="pinError" class="error" hidden></p>
+      <div class="fila-btns"><button type="button" class="btn" data-cerrar>Cancelar</button><button class="btn btn-p" id="pinBtn">Entrar</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Modales del panel -->
+<div class="modal-fondo" id="modalA"><div class="modal modal-medio" role="dialog" aria-modal="true" id="modalAContenido"></div></div>
+<div class="modal-fondo" id="modalB"><div class="modal modal-medio" role="dialog" aria-modal="true" id="modalBContenido"></div></div>
+
+<!-- Panel -->
+<div id="admin" class="admin" hidden>
+  <div class="admin-cab">
+    <strong id="adminTitulo">Panel</strong>
+    <div class="tabs" role="tablist">
+      <button class="tab activo" data-tab="citas">Citas</button>
+      <button class="tab" data-tab="marcas">Marcas</button>
+      <button class="tab" data-tab="horarios">Horarios</button>
+      <button class="tab" data-tab="config">Configuración</button>
+    </div>
+    <button class="btn btn-sm" id="btnSalirAdmin">Salir del panel</button>
+  </div>
+  <div class="admin-cuerpo">
+    <section id="tab-citas"></section>
+    <section id="tab-marcas" hidden></section>
+    <section id="tab-horarios" hidden></section>
+    <section id="tab-config" hidden></section>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden role="status"></div>
+
+<script>
+/* =========================================================
+   1) https://script.google.com/macros/s/AKfycbzZlPKtRzNZYKaSw-pp5lS1vjmnVUo-JJP2VzZUcG7VQQpEGxp2JPpPPuX9nNmPJMeQ/exec
+   ========================================================= */
+const API_URL = 'PEGA_AQUI_LA_URL_DE_TU_APPS_SCRIPT';
+
+const ZONA = 'America/Guayaquil';
+const MODO_DEMO = !/^https:\/\/script\.google\.com\//.test(API_URL);
+const ESTADOS = ['Pendiente', 'Confirmada', 'Reprogramada', 'Atendida', 'Cancelada'];
+const NOMBRES_DIA = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+
+const DEMO = {
+  config: {
+    nombre_empresa: 'My Sense Ec', titular: 'Marcas para cada sentido',
+    texto_intro: 'Reunimos marcas que se eligen con los sentidos. Conócelas y agenda una asesoría personalizada con nuestro equipo.',
+    texto_nosotros: '', logo_url: '', color_fondo: '#1f1526', color_fondo_2: '#2c1f36', color_acento: '#d4b3ef', color_texto: '#f4eef7',
+    ciudad: 'Guayaquil', direccion: '', lat: '', lng: '', whatsapp: '', instagram: '', correo_notificaciones: '', pin_admin: '1234',
+    modalidades: 'Presencial,Virtual', dias_atencion: '1,2,3,4,5', hora_manana_inicio: '09:00', hora_manana_fin: '12:00',
+    hora_tarde_inicio: '14:00', hora_tarde_fin: '17:30', duracion_reserva: '90', intervalo_minutos: '30', citas_simultaneas: '1',
+    anticipacion_min_horas: '3', dias_maximos: '30',
+    mensaje_confirmacion_web: 'Listo, {nombre}. Recibimos tu solicitud de cita para el {fecha} a las {hora}. Te escribiremos para confirmarla.',
+    plantilla_confirmacion: 'Hola, {nombre}. Te saluda el equipo de My Sense Ec. Confirmamos tu cita {modalidad} para el {fecha} a las {hora}. {direccion} Si necesitas cambiar el horario, responde a este mensaje.'
+  },
+  marcas: [
+    { id: 'M1', nombre: 'Marca de ejemplo 1', slogan: 'Edita o elimina esta marca desde el panel', descripcion: 'Aquí va la descripción de la marca.', color_primario: '#e8a87c', color_secundario: '#3d2a1e', logo_url: '', instagram: '', web: '', orden: '1', visible: 'si' },
+    { id: 'M2', nombre: 'Marca de ejemplo 2', slogan: 'Cada marca luce sus propios colores', descripcion: 'Aquí va la descripción de la marca.', color_primario: '#8fd3c7', color_secundario: '#163a35', logo_url: '', instagram: '', web: '', orden: '2', visible: 'si' }
+  ],
+  productos: [], bloqueos: [], ocupadas: []
+};
+
+let D = { config: {}, marcas: [], productos: [], bloqueos: [], ocupadas: [] };
+const A = { pin: null, citas: [], filtro: 'proximas', busqueda: '', tab: 'citas' };
+let R = { fecha: null, hora: null };
+let mapaPublico = null, mapaUbicar = null;
+
+/* ---------- Utilidades ---------- */
+const $ = id => document.getElementById(id);
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function cfg(k, def) { const v = D.config[k]; return (v === undefined || v === null || String(v).trim() === '') ? (def === undefined ? '' : def) : String(v); }
+function colorValido(c, def) { const s = String(c || '').trim(); return /^#[0-9a-f]{6}$/i.test(s) ? s : def; }
+function contraste(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  const ch = [n >> 16 & 255, n >> 8 & 255, n & 255].map(v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); });
+  return (.2126 * ch[0] + .7152 * ch[1] + .0722 * ch[2]) > .179 ? '#16121a' : '#ffffff';
+}
+function ordenar(l) { return l.slice().sort((a, b) => (Number(a.orden) || 999) - (Number(b.orden) || 999)); }
+function iniciales(n) { return String(n || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(p => p[0]).join('').toUpperCase(); }
+function nuevoId(p) { return p + Date.now().toString(36).toUpperCase() + Math.floor(Math.random() * 100); }
+function urlSegura(u) { const s = String(u || '').trim(); if (!s) return ''; if (/^https?:\/\//i.test(s)) return s; if (/^data:image\//.test(s)) return s; return 'https://' + s; }
+function linkInstagram(v) { const s = String(v || '').trim(); if (!s) return ''; return /^https?:\/\//i.test(s) ? s : 'https://instagram.com/' + s.replace(/^@/, ''); }
+function numeroWa(n) { let d = String(n || '').replace(/\D/g, ''); if (d.startsWith('0') && d.length === 10) d = '593' + d.slice(1); else if (d.length === 9 && d.startsWith('9')) d = '593' + d; return d; }
+function waLink(n, texto) { return 'https://wa.me/' + numeroWa(n) + (texto ? '?text=' + encodeURIComponent(texto) : ''); }
+function sinPuntoDoble(s) { return String(s).replace(/m\.\./g, 'm.'); }
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, 2600); }
+function mostrarAviso(msg) { const a = $('aviso'); a.textContent = msg; a.hidden = false; }
+
+/* ---------- Fechas y horas (zona de Ecuador) ---------- */
+function hoyGye() {
+  const p = new Intl.DateTimeFormat('en-CA', { timeZone: ZONA, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+  const g = t => p.find(x => x.type === t).value;
+  return { fecha: g('year') + '-' + g('month') + '-' + g('day'), min: (Number(g('hour')) % 24) * 60 + Number(g('minute')) };
+}
+function partes(f) { return String(f).split('-').map(Number); }
+function sumarDias(f, n) { const [y, m, d] = partes(f); return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10); }
+function diaSemana(f) { const [y, m, d] = partes(f); return new Date(Date.UTC(y, m - 1, d)).getUTCDay(); }
+function diferenciaDias(a, b) { const [y1, m1, d1] = partes(a), [y2, m2, d2] = partes(b); return Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86400000); }
+function fechaUTC(f) { const [y, m, d] = partes(f); return new Date(Date.UTC(y, m - 1, d, 12)); }
+function fechaLarga(f) { if (!/^\d{4}-\d{2}-\d{2}$/.test(String(f))) return String(f || ''); return fechaUTC(f).toLocaleDateString('es-EC', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }); }
+function aMin(h) { const p = String(h || '').split(':'); return Number(p[0]) * 60 + Number(p[1] || 0); }
+function aHora(m) { return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
+function hora12(h) { if (!/^\d{1,2}:\d{2}/.test(String(h))) return String(h || ''); const [a, b] = String(h).split(':').map(Number); return (a % 12 || 12) + ':' + String(b).padStart(2, '0') + (a >= 12 ? ' p. m.' : ' a. m.'); }
+
+function horariosDelDia(fecha, ocupadas, esAdmin) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(fecha))) return [];
+  if (D.bloqueos.some(b => b.fecha === fecha)) return [];
+  const dias = cfg('dias_atencion', '1,2,3,4,5').split(',').map(s => s.trim());
+  if (!dias.includes(String(diaSemana(fecha)))) return [];
+  const dur = Number(cfg('duracion_reserva', '90')) || 90;
+  const paso = Number(cfg('intervalo_minutos', '30')) || 30;
+  const cupo = Number(cfg('citas_simultaneas', '1')) || 1;
+  const antic = (Number(cfg('anticipacion_min_horas', '0')) || 0) * 60;
+  const h = hoyGye();
+  const dif = diferenciaDias(h.fecha, fecha);
+  if (dif < 0 && !esAdmin) return [];
+  const bloques = [[cfg('hora_manana_inicio'), cfg('hora_manana_fin')], [cfg('hora_tarde_inicio'), cfg('hora_tarde_fin')]].filter(b => b[0] && b[1]);
+  const delDia = ocupadas.filter(o => o.fecha === fecha);
+  const libres = [];
+  bloques.forEach(([a, b]) => {
+    const ini = aMin(a), fin = aMin(b);
+    for (let t = ini; t + dur <= fin; t += paso) {
+      if (!esAdmin && dif * 1440 + t - h.min < antic) continue;
+      const cruces = delDia.filter(o => { const oi = aMin(o.hora), od = Number(o.duracion) || dur; return t < oi + od && oi < t + dur; }).length;
+      if (cruces < cupo) libres.push(aHora(t));
+    }
+  });
+  return libres;
+}
+function diasDisponibles() {
+  const h = hoyGye(), max = Number(cfg('dias_maximos', '30')) || 30, out = [];
+  for (let i = 0; i <= max; i++) { const f = sumarDias(h.fecha, i); if (horariosDelDia(f, D.ocupadas).length) out.push(f); }
+  return out;
+}
+function textoDias() {
+  const sel = cfg('dias_atencion', '1,2,3,4,5').split(',').map(s => Number(s.trim()));
+  const semana = [1, 2, 3, 4, 5, 6, 0].filter(n => sel.includes(n));
+  if (!semana.length) return '';
+  const idx = semana.map(n => [1, 2, 3, 4, 5, 6, 0].indexOf(n));
+  const seguido = idx.every((v, i) => i === 0 || v === idx[i - 1] + 1);
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  if (semana.length > 2 && seguido) return cap(NOMBRES_DIA[semana[0]]) + ' a ' + NOMBRES_DIA[semana[semana.length - 1]];
+  return cap(semana.map(n => NOMBRES_DIA[n]).join(', ').replace(/, ([^,]*)$/, ' y $1'));
+}
+function textoHorario() {
+  const t = [];
+  if (cfg('hora_manana_inicio') && cfg('hora_manana_fin')) t.push(hora12(cfg('hora_manana_inicio')) + ' a ' + hora12(cfg('hora_manana_fin')));
+  if (cfg('hora_tarde_inicio') && cfg('hora_tarde_fin')) t.push(hora12(cfg('hora_tarde_inicio')) + ' a ' + hora12(cfg('hora_tarde_fin')));
+  return t.join(' y ');
+}
+
+/* ---------- Comunicación con la Hoja ---------- */
+async function obtener(params) {
+  const r = await fetch(API_URL + '?t=' + Date.now() + (params || ''), { cache: 'no-store' });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || 'Error al leer los datos');
+  return j;
+}
+function enviar(obj) {
+  if (MODO_DEMO) return Promise.resolve();
+  return fetch(API_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(obj) });
+}
+async function enviarYLeer(obj) {
+  const r = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(obj) });
+  return r.json();
+}
+function tomarDatos(j) {
+  D = { config: j.config || {}, marcas: j.marcas || [], productos: j.productos || [], bloqueos: j.bloqueos || [], ocupadas: j.ocupadas || [] };
+}
+
+async function cargar() {
+  if (MODO_DEMO) {
+    tomarDatos(JSON.parse(JSON.stringify(DEMO)));
+    mostrarAviso('Vista de prueba: la página aún no está conectada a tu Hoja de Google. El PIN de prueba es 1234.');
+  } else {
+    try { tomarDatos(await obtener()); }
+    catch (e) { tomarDatos(JSON.parse(JSON.stringify(DEMO))); D.marcas = []; mostrarAviso('No se pudo cargar la información. Revisa tu conexión y recarga la página.'); }
+  }
+  aplicarTema();
+  renderPublico();
+  rellenarContacto();
+}
+
+/* ---------- Tema ---------- */
+function aplicarTema() {
+  const s = document.documentElement.style;
+  const fondo = colorValido(cfg('color_fondo'), '#1f1526');
+  const acento = colorValido(cfg('color_acento'), '#d4b3ef');
+  s.setProperty('--bg', fondo);
+  s.setProperty('--bg2', colorValido(cfg('color_fondo_2'), '#2c1f36'));
+  s.setProperty('--acento', acento);
+  s.setProperty('--texto', colorValido(cfg('color_texto'), contraste(fondo) === '#ffffff' ? '#f4eef7' : '#1b1620'));
+  s.setProperty('--sobre-acento', contraste(acento));
+  $('metaTema').setAttribute('content', fondo);
+  document.title = cfg('nombre_empresa', 'My Sense Ec');
+}
+
+/* ---------- Vista pública ---------- */
+function htmlLogoEmpresa() {
+  const nombre = cfg('nombre_empresa', 'My Sense Ec');
+  return cfg('logo_url') ? `<img src="${esc(urlSegura(cfg('logo_url')))}" alt="${esc(nombre)}">` : `<span class="marca-texto">${esc(nombre)}</span>`;
+}
+function renderPublico() {
+  const nombre = cfg('nombre_empresa', 'My Sense Ec');
+  $('logoZona').innerHTML = htmlLogoEmpresa();
+  $('titular').textContent = cfg('titular', nombre);
+  $('intro').textContent = cfg('texto_intro');
+  document.querySelectorAll('.nEmpresa').forEach(e => e.textContent = nombre);
+  const nos = cfg('texto_nosotros');
+  $('nosotros').hidden = !nos; $('navNosotros').hidden = !nos; $('nosotrosTexto').textContent = nos;
+  $('pieTexto').textContent = '© ' + new Date().getFullYear() + ' ' + nombre;
+  renderMosaico();
+  renderSelects();
+  renderDias(); renderHoras(); renderResumen();
+  renderContacto();
+}
+function renderMosaico() {
+  const marcas = ordenar(D.marcas.filter(m => m.visible !== 'no'));
+  $('marcasConteo').textContent = marcas.length ? (marcas.length === 1 ? '1 marca' : marcas.length + ' marcas') + '. Toca una para conocerla.' : '';
+  $('mosaico').innerHTML = marcas.length ? marcas.map(m => {
+    const p = colorValido(m.color_primario, '#d4b3ef');
+    const logo = m.logo_url ? `<img src="${esc(urlSegura(m.logo_url))}" alt="" loading="lazy">` : `<span class="iniciales">${esc(iniciales(m.nombre))}</span>`;
+    return `<button type="button" class="marca" style="--mp:${p};--mt:${contraste(p)}" data-marca="${esc(m.id)}">
+      <span class="marca-logo">${logo}</span>
+      <span><span class="marca-nombre">${esc(m.nombre)}</span>${m.slogan ? `<span class="marca-slogan">${esc(m.slogan)}</span>` : ''}</span>
+    </button>`;
+  }).join('') : '<p class="suave">Muy pronto verás aquí nuestras marcas.</p>';
+}
+function abrirFicha(id) {
+  const m = D.marcas.find(x => x.id === id); if (!m) return;
+  const p = colorValido(m.color_primario, '#d4b3ef'), s = colorValido(m.color_secundario, '#222222');
+  const prods = ordenar(D.productos.filter(x => x.marca_id === m.id && x.visible !== 'no'));
+  const logo = m.logo_url ? `<img src="${esc(urlSegura(m.logo_url))}" alt="">` : `<span class="iniciales">${esc(iniciales(m.nombre))}</span>`;
+  const ig = linkInstagram(m.instagram), web = m.web ? urlSegura(m.web) : '';
+  $('fichaContenido').innerHTML = `<div style="--mp:${p};--mt:${contraste(p)};--ms:${s};--mst:${contraste(s)}">
+    <div class="ficha-cab"><button class="cerrar" data-cerrar aria-label="Cerrar">×</button>${logo}
+      <div><h2>${esc(m.nombre)}</h2>${m.slogan ? `<p>${esc(m.slogan)}</p>` : ''}</div></div>
+    <div class="ficha-cuerpo">
+      ${m.descripcion ? `<p class="prosa" style="margin-top:0">${esc(m.descripcion)}</p>` : ''}
+      ${prods.length ? `<h3>Productos</h3><div class="productos">${prods.map(x => `<div class="producto">${x.imagen_url ? `<img src="${esc(urlSegura(x.imagen_url))}" alt="${esc(x.nombre)}" loading="lazy">` : ''}<div><b>${esc(x.nombre)}</b>${x.descripcion ? `<span>${esc(x.descripcion)}</span>` : ''}</div></div>`).join('')}</div>` : ''}
+      <div class="ficha-acciones">
+        <button type="button" class="btn btn-marca" data-agendar="${esc(m.id)}">Agendar asesoría sobre ${esc(m.nombre)}</button>
+        ${ig ? `<a class="btn btn-marca-sec" href="${esc(ig)}" target="_blank" rel="noopener">Instagram</a>` : ''}
+        ${web ? `<a class="btn btn-marca-sec" href="${esc(web)}" target="_blank" rel="noopener">Sitio web</a>` : ''}
+      </div>
+    </div></div>`;
+  abrirModal('fichaModal');
+}
+function renderSelects() {
+  const actual = $('fMarca').value;
+  const marcas = ordenar(D.marcas.filter(m => m.visible !== 'no'));
+  $('fMarca').innerHTML = '<option value="General">General o varias marcas</option>' + marcas.map(m => `<option value="${esc(m.nombre)}">${esc(m.nombre)}</option>`).join('');
+  if (actual) $('fMarca').value = actual;
+  if (!$('fMarca').value) $('fMarca').value = 'General';
+  const mods = cfg('modalidades', 'Presencial').split(',').map(s => s.trim()).filter(Boolean);
+  $('fModalidad').innerHTML = mods.map(m => `<option>${esc(m)}</option>`).join('');
+  $('lblModalidad').hidden = mods.length < 2;
+}
+function renderDias() {
+  const dias = diasDisponibles();
+  if (R.fecha && !dias.includes(R.fecha)) { R.fecha = null; R.hora = null; }
+  if (!dias.length) {
+    const wa = cfg('whatsapp');
+    $('dias').innerHTML = `<p class="suave">No hay horarios disponibles por ahora.${wa ? ` <a class="enlace" href="${esc(waLink(wa, 'Hola, quisiera agendar una asesoría.'))}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>.` : ''}</p>`;
+    return;
+  }
+  $('dias').innerHTML = dias.map(f => {
+    const d = fechaUTC(f);
+    const sem = d.toLocaleDateString('es-EC', { weekday: 'short', timeZone: 'UTC' }).replace('.', '');
+    const mes = d.toLocaleDateString('es-EC', { month: 'short', timeZone: 'UTC' }).replace('.', '');
+    return `<button type="button" class="chip dia${R.fecha === f ? ' activo' : ''}" data-fecha="${f}" aria-pressed="${R.fecha === f}" aria-label="${esc(fechaLarga(f))}">
+      <span class="dsem">${esc(sem)}</span><span class="dnum">${d.getUTCDate()}</span><span class="dmes">${esc(mes)}</span></button>`;
+  }).join('');
+}
+function renderHoras() {
+  if (!R.fecha) { $('horas').innerHTML = '<p class="suave" style="margin:0">Primero elige un día.</p>'; return; }
+  const libres = horariosDelDia(R.fecha, D.ocupadas);
+  if (R.hora && !libres.includes(R.hora)) R.hora = null;
+  $('horas').innerHTML = libres.map(h => `<button type="button" class="chip${R.hora === h ? ' activo' : ''}" data-hora="${h}" aria-pressed="${R.hora === h}">${hora12(h)}</button>`).join('');
+}
+function renderResumen() {
+  const dur = cfg('duracion_reserva', '90');
+  $('resumenCita').textContent = (R.fecha && R.hora)
+    ? 'Tu cita: ' + fechaLarga(R.fecha) + ', ' + hora12(R.hora) + '. Reservamos hasta ' + dur + ' minutos para ti.'
+    : 'Aún no eliges día y hora.';
+}
+function renderContacto() {
+  const filas = [];
+  const dir = [cfg('direccion'), cfg('ciudad')].filter(Boolean).join(', ');
+  const lat = cfg('lat'), lng = cfg('lng');
+  const tieneCoords = lat && lng && !isNaN(Number(lat)) && !isNaN(Number(lng));
+  if (cfg('direccion')) {
+    const q = tieneCoords ? lat + ',' + lng : dir;
+    filas.push(`<p class="dato"><b>Dirección</b>${esc(dir)}<br><a class="enlace" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}" target="_blank" rel="noopener">Cómo llegar</a></p>`);
+  }
+  const dias = textoDias(), horas = textoHorario();
+  if (dias && horas) filas.push(`<p class="dato"><b>Horario de atención</b>${esc(dias)}, de ${esc(horas)}</p>`);
+  const acciones = [];
+  if (cfg('whatsapp')) acciones.push(`<a class="btn btn-p" href="${esc(waLink(cfg('whatsapp'), 'Hola, quisiera más información.'))}" target="_blank" rel="noopener">Escribir por WhatsApp</a>`);
+  if (cfg('instagram')) acciones.push(`<a class="btn" href="${esc(linkInstagram(cfg('instagram')))}" target="_blank" rel="noopener">Instagram</a>`);
+  if (acciones.length) filas.push(`<div class="acciones">${acciones.join('')}</div>`);
+  $('contactoDatos').innerHTML = filas.join('') || '<p class="suave">Agenda tu cita y te contactamos.</p>';
+
+  const caja = $('mapaPublico');
+  if (tieneCoords && window.L) {
+    caja.hidden = false;
+    if (mapaPublico) { mapaPublico.remove(); mapaPublico = null; }
+    mapaPublico = L.map(caja, { scrollWheelZoom: false }).setView([Number(lat), Number(lng)], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(mapaPublico);
+    L.marker([Number(lat), Number(lng)]).addTo(mapaPublico);
+  } else {
+    caja.hidden = true;
+  }
+}
+
+/* ---------- Agendar ---------- */
+function rellenarContacto() {
+  try {
+    const c = JSON.parse(localStorage.getItem('mysense_contacto') || 'null');
+    if (c) { $('fNombre').value = c.nombre || ''; $('fCelular').value = c.celular || ''; $('fCorreo').value = c.correo || ''; $('fEmpresa').value = c.empresa || ''; }
+  } catch (e) {}
+}
+function guardarContacto(d) {
+  try { localStorage.setItem('mysense_contacto', JSON.stringify({ nombre: d.nombre, celular: d.celular, correo: d.correo, empresa: d.empresa })); } catch (e) {}
+}
+function textoWhatsCliente(d) {
+  if (d && d.fecha && d.hora) return ('Hola, soy ' + d.nombre + '. Acabo de agendar una cita para el ' + fechaLarga(d.fecha) + ' a las ' + hora12(d.hora) + '.').replace(/m\.\.$/, 'm.');
+  return 'Hola, quisiera agendar una asesoría.';
+}
+function mostrarError(msg, conWhats, datos) {
+  const e = $('errorCita');
+  const wa = cfg('whatsapp');
+  e.innerHTML = esc(msg) + (conWhats && wa ? ` <a class="enlace" href="${esc(waLink(wa, textoWhatsCliente(datos)))}" target="_blank" rel="noopener">Escribir por WhatsApp</a>` : '');
+  e.hidden = false;
+}
+async function recargarDisponibilidad() {
+  if (MODO_DEMO) return;
+  try { const j = await obtener(); D.ocupadas = j.ocupadas || []; D.bloqueos = j.bloqueos || []; } catch (e) {}
+}
+function mostrarListo(d) {
+  const plantilla = cfg('mensaje_confirmacion_web', 'Listo, {nombre}. Recibimos tu solicitud de cita para el {fecha} a las {hora}.');
+  const msg = plantilla.replace(/\{nombre\}/g, d.nombre.split(' ')[0]).replace(/\{fecha\}/g, fechaLarga(d.fecha)).replace(/\{hora\}/g, hora12(d.hora));
+  const msgFinal = sinPuntoDoble(msg);
+  const wa = cfg('whatsapp');
+  $('agendaListo').innerHTML = `<h3 tabindex="-1" id="listoTitulo">Cita solicitada</h3><p>${esc(msgFinal)}</p>
+    <div class="acciones">${wa ? `<a class="btn btn-p" href="${esc(waLink(wa, textoWhatsCliente(d)))}" target="_blank" rel="noopener">Escribir por WhatsApp</a>` : ''}
+    <button type="button" class="btn" id="btnOtraCita">Agendar otra cita</button>
+    <a class="btn" href="#principal">Volver al inicio</a></div>`;
+  $('agendaCuerpo').hidden = true; $('agendaListo').hidden = false;
+  $('listoTitulo').focus();
+  $('btnOtraCita').onclick = () => {
+    R = { fecha: null, hora: null }; $('fMotivo').value = ''; $('fConsent').checked = false; $('errorCita').hidden = true;
+    $('agendaListo').hidden = true; $('agendaCuerpo').hidden = false;
+    renderDias(); renderHoras(); renderResumen();
+  };
+}
+$('formCita').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('errorCita').hidden = true;
+  const d = {
+    accion: 'agendar', nombre: $('fNombre').value.trim(), celular: $('fCelular').value.trim(), correo: $('fCorreo').value.trim(),
+    empresa: $('fEmpresa').value.trim(), marca: $('fMarca').value, modalidad: $('fModalidad').value, motivo: $('fMotivo').value.trim(),
+    fecha: R.fecha, hora: R.hora, consentimiento: $('fConsent').checked, sitio_web: $('fSitio').value
+  };
+  const faltas = [];
+  if (!d.fecha || !d.hora) faltas.push('elige día y hora');
+  if (!d.nombre) faltas.push('escribe tu nombre');
+  if (d.celular.replace(/\D/g, '').length < 9) faltas.push('escribe un celular válido');
+  if (d.correo && !/^\S+@\S+\.\S+$/.test(d.correo)) faltas.push('revisa tu correo');
+  if (!d.consentimiento) faltas.push('marca la autorización de datos');
+  if (faltas.length) { mostrarError('Para continuar, ' + faltas.join(', ').replace(/, ([^,]*)$/, ' y $1') + '.'); return; }
+
+  const btn = $('btnAgendar');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  try {
+    let res;
+    if (MODO_DEMO) { await new Promise(r => setTimeout(r, 700)); res = { ok: true }; }
+    else res = await enviarYLeer(d);
+    if (res.ok) {
+      guardarContacto(d);
+      D.ocupadas.push({ fecha: d.fecha, hora: d.hora, duracion: cfg('duracion_reserva', '90') });
+      mostrarListo(d);
+    } else if (res.error === 'ocupado') {
+      R.hora = null;
+      await recargarDisponibilidad();
+      renderDias(); renderHoras(); renderResumen();
+      mostrarError('Ese horario acaba de ocuparse. Elige otra hora.');
+    } else {
+      mostrarError((res.error || 'No se pudo agendar la cita') + '. Inténtalo de nuevo o escríbenos.', true, d);
+    }
+  } catch (x) {
+    mostrarError('No se pudo enviar tu solicitud. Revisa tu conexión e inténtalo de nuevo, o escríbenos.', true, d);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Agendar cita';
+  }
+});
+$('dias').addEventListener('click', e => {
+  const b = e.target.closest('[data-fecha]'); if (!b) return;
+  R.fecha = b.dataset.fecha; R.hora = null;
+  renderDias(); renderHoras(); renderResumen();
+});
+$('horas').addEventListener('click', e => {
+  const b = e.target.closest('[data-hora]'); if (!b) return;
+  R.hora = b.dataset.hora; renderHoras(); renderResumen();
+});
+$('mosaico').addEventListener('click', e => { const b = e.target.closest('[data-marca]'); if (b) abrirFicha(b.dataset.marca); });
+$('fichaContenido').addEventListener('click', e => {
+  const b = e.target.closest('[data-agendar]'); if (!b) return;
+  const m = D.marcas.find(x => x.id === b.dataset.agendar);
+  cerrarModal('fichaModal');
+  if (m) $('fMarca').value = m.nombre;
+  $('agenda').scrollIntoView();
+});
+
+/* ---------- Modales ---------- */
+function abrirModal(id) {
+  $(id).classList.add('abierto'); document.body.classList.add('sin-scroll');
+  const f = $(id).querySelector('input:not([type=hidden]):not(.trampa), select, textarea, button');
+  if (f) setTimeout(() => f.focus(), 30);
+}
+function cerrarModal(id) {
+  $(id).classList.remove('abierto');
+  if (!document.querySelector('.modal-fondo.abierto') && $('admin').hidden) document.body.classList.remove('sin-scroll');
+}
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-fondo')) cerrarModal(e.target.id);
+  const c = e.target.closest('[data-cerrar]'); if (c) cerrarModal(c.closest('.modal-fondo').id);
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const abiertos = document.querySelectorAll('.modal-fondo.abierto');
+  if (abiertos.length) cerrarModal(abiertos[abiertos.length - 1].id);
+});
+
+/* ---------- Acceso al panel ----------
+   El PIN se comprueba en Apps Script, pero es una protección básica:
+   no lo uses como contraseña de otros servicios. */
+$('logoBtn').addEventListener('click', async () => {
+  let guardado = null; try { guardado = sessionStorage.getItem('mysense_pin'); } catch (e) {}
+  if (guardado) { try { await entrarAdmin(guardado); abrirAdmin(); return; } catch (e) {} }
+  $('pinInput').value = ''; $('pinError').hidden = true; abrirModal('pinModal');
+});
+$('pinForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const b = $('pinBtn'); b.disabled = true; b.textContent = 'Entrando…';
+  try { await entrarAdmin($('pinInput').value.trim()); cerrarModal('pinModal'); abrirAdmin(); }
+  catch (x) { $('pinError').textContent = x.message === 'PIN incorrecto' ? 'El PIN no es correcto.' : 'No se pudo conectar con la Hoja. Inténtalo de nuevo.'; $('pinError').hidden = false; }
+  finally { b.disabled = false; b.textContent = 'Entrar'; }
+});
+async function entrarAdmin(pin) {
+  if (MODO_DEMO) {
+    if (pin !== String(D.config.pin_admin || '1234')) throw new Error('PIN incorrecto');
+    if (!A.citas.length) {
+      const h = hoyGye().fecha;
+      A.citas = [
+        { id: 'C1', creado: h + ' 10:00', nombre: 'Cliente de ejemplo', empresa: '', celular: '0991234567', correo: '', marca: 'General', modalidad: 'Presencial', fecha: sumarDias(h, 2), hora: '09:00', duracion: '90', motivo: 'Conocer las marcas', estado: 'Pendiente', notas_internas: '' }
+      ];
+    }
+  } else {
+    const j = await obtener('&accion=admin&pin=' + encodeURIComponent(pin));
+    tomarDatos(j); A.citas = j.citas || [];
+  }
+  A.pin = pin; try { sessionStorage.setItem('mysense_pin', pin); } catch (e) {}
+}
+function abrirAdmin() {
+  $('admin').hidden = false; document.body.classList.add('sin-scroll');
+  $('adminTitulo').textContent = 'Panel de ' + cfg('nombre_empresa', 'My Sense Ec');
+  renderAdmin();
+}
+$('btnSalirAdmin').addEventListener('click', () => {
+  $('admin').hidden = true; document.body.classList.remove('sin-scroll');
+  aplicarTema(); renderPublico();
+});
+document.querySelector('.tabs').addEventListener('click', e => {
+  const t = e.target.closest('[data-tab]'); if (!t) return;
+  A.tab = t.dataset.tab;
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('activo', x === t));
+  ['citas', 'marcas', 'horarios', 'config'].forEach(n => $('tab-' + n).hidden = n !== A.tab);
+});
+function renderAdmin() { renderTabCitas(); renderTabMarcas(); renderTabHorarios(); renderTabConfig(); }
+function refrescarLuego() {
+  if (MODO_DEMO) { renderAdmin(); return; }
+  clearTimeout(refrescarLuego.t);
+  refrescarLuego.t = setTimeout(async () => {
+    try { await entrarAdmin(A.pin); renderAdmin(); } catch (e) { toast('No se pudo actualizar la lista. Recarga la página.'); }
+  }, 1800);
+}
+
+/* ---------- Pestaña Citas ---------- */
+function ocupadasDesdeCitas(ignorarId) {
+  return A.citas.filter(c => c.estado !== 'Cancelada' && c.id !== ignorarId).map(c => ({ fecha: c.fecha, hora: c.hora, duracion: c.duracion }));
+}
+function citasFiltradas() {
+  const hoy = hoyGye().fecha;
+  let l = A.citas.slice();
+  if (A.filtro === 'proximas') l = l.filter(c => c.fecha >= hoy && c.estado !== 'Cancelada' && c.estado !== 'Atendida');
+  else if (A.filtro !== 'todas') l = l.filter(c => c.estado === A.filtro);
+  const q = A.busqueda.trim().toLowerCase();
+  if (q) l = l.filter(c => [c.nombre, c.empresa, c.celular, c.correo, c.marca, c.motivo].join(' ').toLowerCase().includes(q));
+  l.sort((a, b) => (a.fecha + a.hora).localeCompare(b.fecha + b.hora));
+  if (A.filtro !== 'proximas') l.reverse();
+  return l;
+}
+function renderTabCitas() {
+  const hoy = hoyGye().fecha, mes = hoy.slice(0, 7);
+  const prox = A.citas.filter(c => c.fecha >= hoy && c.estado !== 'Cancelada' && c.estado !== 'Atendida');
+  const cuenta = est => A.citas.filter(c => c.estado === est).length;
+  const porMarca = {};
+  A.citas.filter(c => c.estado !== 'Cancelada').forEach(c => { const k = c.marca || 'General'; porMarca[k] = (porMarca[k] || 0) + 1; });
+  const lista = citasFiltradas();
+  const opcionesFiltro = [['proximas', 'Próximas'], ['todas', 'Todas']].concat(ESTADOS.map(e => [e, e + 's']));
+  $('tab-citas').innerHTML = `
+    <div class="metricas">
+      <div class="metrica"><b>${prox.length}</b><span>Próximas</span></div>
+      <div class="metrica"><b>${prox.filter(c => c.estado === 'Pendiente').length}</b><span>Por confirmar</span></div>
+      <div class="metrica"><b>${A.citas.filter(c => (c.fecha || '').startsWith(mes) && c.estado !== 'Cancelada').length}</b><span>Este mes</span></div>
+      <div class="metrica"><b>${cuenta('Atendida')}</b><span>Atendidas</span></div>
+      <div class="metrica"><b>${cuenta('Cancelada')}</b><span>Canceladas</span></div>
+    </div>
+    ${Object.keys(porMarca).length ? `<p class="suave" style="margin:0 0 18px">Citas por marca: ${Object.keys(porMarca).sort((a, b) => porMarca[b] - porMarca[a]).map(k => esc(k) + ' (' + porMarca[k] + ')').join(', ')}.</p>` : ''}
+    <div class="herramientas">
+      <select id="aFiltro" aria-label="Filtrar citas">${opcionesFiltro.map(([v, t]) => `<option value="${v}"${A.filtro === v ? ' selected' : ''}>${t}</option>`).join('')}</select>
+      <input id="aBuscar" type="search" placeholder="Buscar por nombre, celular, marca…" value="${esc(A.busqueda)}" aria-label="Buscar">
+      <button class="btn btn-p btn-sm" data-acc="nueva">Nueva cita</button>
+      <button class="btn btn-sm" data-acc="excel">Descargar Excel</button>
+      <button class="btn btn-sm" data-acc="recargar">Actualizar</button>
+    </div>
+    ${lista.length ? `<div class="tabla-env"><table>
+      <thead><tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>WhatsApp</th><th>Correo</th><th>Empresa</th><th>Marca</th><th>Modalidad</th><th>Motivo</th><th>Estado</th><th>Notas internas</th><th>Acciones</th></tr></thead>
+      <tbody>${lista.map(c => `<tr>
+        <td>${esc(fechaLarga(c.fecha))}</td><td>${esc(hora12(c.hora))}</td><td><b>${esc(c.nombre)}</b></td>
+        <td>${c.celular ? `<a class="enlace" href="${esc(waLink(c.celular))}" target="_blank" rel="noopener">${esc(String(c.celular))}</a>` : ''}</td>
+        <td>${c.correo ? `<a class="enlace" href="mailto:${esc(c.correo)}">${esc(c.correo)}</a>` : ''}</td>
+        <td>${esc(c.empresa)}</td><td>${esc(c.marca)}</td><td>${esc(c.modalidad)}</td>
+        <td class="largo">${esc(c.motivo)}</td>
+        <td><select data-estado="${esc(c.id)}" aria-label="Estado">${ESTADOS.map(e => `<option${c.estado === e ? ' selected' : ''}>${e}</option>`).join('')}</select></td>
+        <td class="largo">${esc(c.notas_internas)}</td>
+        <td><div class="acc">
+          <button class="btn btn-xs" data-acc="copiar" data-id="${esc(c.id)}">Copiar mensaje</button>
+          <button class="btn btn-xs" data-acc="editar" data-id="${esc(c.id)}">Editar</button>
+          <button class="btn btn-xs btn-peligro" data-acc="eliminar" data-id="${esc(c.id)}">Eliminar</button>
+        </div></td></tr>`).join('')}</tbody></table></div>`
+      : '<p class="suave">No hay citas con este filtro. Puedes registrar una con «Nueva cita».</p>'}`;
+  $('aFiltro').onchange = e => { A.filtro = e.target.value; renderTabCitas(); };
+  $('aBuscar').oninput = e => { A.busqueda = e.target.value; const pos = e.target.selectionStart; renderTabCitas(); const b = $('aBuscar'); b.focus(); b.setSelectionRange(pos, pos); };
+}
+$('tab-citas').addEventListener('change', e => {
+  const s = e.target.closest('[data-estado]'); if (!s) return;
+  const c = A.citas.find(x => x.id === s.dataset.estado); if (!c) return;
+  c.estado = s.value;
+  enviar({ accion: 'estadoCita', pin: A.pin, id: c.id, estado: c.estado });
+  toast('Estado cambiado a ' + c.estado.toLowerCase());
+  renderTabCitas(); refrescarLuego();
+});
+$('tab-citas').addEventListener('click', async e => {
+  const b = e.target.closest('[data-acc]'); if (!b) return;
+  const c = A.citas.find(x => x.id === b.dataset.id);
+  switch (b.dataset.acc) {
+    case 'nueva': editarCita(null); break;
+    case 'editar': editarCita(c); break;
+    case 'copiar': copiar(mensajeConfirmacion(c)).then(() => toast('Mensaje copiado')); break;
+    case 'eliminar':
+      if (c && confirm('¿Eliminar la cita de ' + c.nombre + '? Esta acción no se puede deshacer.')) {
+        A.citas = A.citas.filter(x => x.id !== c.id);
+        enviar({ accion: 'eliminarCita', pin: A.pin, id: c.id });
+        toast('Cita eliminada'); renderTabCitas(); refrescarLuego();
+      }
+      break;
+    case 'excel': descargarExcel(); break;
+    case 'recargar':
+      try { if (!MODO_DEMO) await entrarAdmin(A.pin); renderAdmin(); toast('Lista actualizada'); } catch (x) { toast('No se pudo actualizar'); }
+      break;
+  }
+});
+function mensajeConfirmacion(c) {
+  if (!c) return '';
+  const presencial = /presencial/i.test(c.modalidad || '');
+  const dir = presencial && cfg('direccion') ? 'Te esperamos en ' + [cfg('direccion'), cfg('ciudad')].filter(Boolean).join(', ') + '.' : '';
+  return cfg('plantilla_confirmacion', 'Hola, {nombre}. Confirmamos tu cita para el {fecha} a las {hora}.')
+    .replace(/\{nombre\}/g, String(c.nombre || '').split(' ')[0])
+    .replace(/\{fecha\}/g, fechaLarga(c.fecha)).replace(/\{hora\}/g, hora12(c.hora))
+    .replace(/\{modalidad\}/g, String(c.modalidad || '').toLowerCase())
+    .replace(/\{marca\}/g, c.marca || '').replace(/\{direccion\}/g, dir)
+    .replace(/\s{2,}/g, ' ').replace(/m\.\./g, 'm.').trim();
+}
+function copiar(texto) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(texto);
+  const t = document.createElement('textarea'); t.value = texto; document.body.appendChild(t); t.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  t.remove(); return Promise.resolve();
+}
+function opcionesHora(fecha, idCita, actual) {
+  const libres = horariosDelDia(fecha, ocupadasDesdeCitas(idCita), true);
+  if (actual && !libres.includes(actual)) libres.unshift(actual);
+  return libres;
+}
+function editarCita(c) {
+  const nueva = !c;
+  const x = c ? Object.assign({}, c) : { id: nuevoId('C'), nombre: '', empresa: '', celular: '', correo: '', marca: 'General', modalidad: cfg('modalidades', 'Presencial').split(',')[0].trim(), fecha: hoyGye().fecha, hora: '', motivo: '', estado: 'Confirmada', notas_internas: '' };
+  const marcas = ['General'].concat(ordenar(D.marcas).map(m => m.nombre));
+  if (x.marca && !marcas.includes(x.marca)) marcas.push(x.marca);
+  const mods = cfg('modalidades', 'Presencial').split(',').map(s => s.trim()).filter(Boolean);
+  $('modalAContenido').innerHTML = `<button class="cerrar" data-cerrar aria-label="Cerrar">×</button>
+    <h3>${nueva ? 'Nueva cita' : 'Editar cita'}</h3>
+    <label>Nombre y apellido<input id="eNombre" value="${esc(x.nombre)}"></label>
+    <div class="dos"><label>Celular<input id="eCelular" type="tel" value="${esc(String(x.celular || ''))}"></label>
+    <label>Correo<input id="eCorreo" type="email" value="${esc(x.correo)}"></label></div>
+    <label>Empresa<input id="eEmpresa" value="${esc(x.empresa)}"></label>
+    <div class="dos"><label>Marca<select id="eMarca">${marcas.map(m => `<option${m === x.marca ? ' selected' : ''}>${esc(m)}</option>`).join('')}</select></label>
+    <label>Modalidad<select id="eModalidad">${mods.map(m => `<option${m === x.modalidad ? ' selected' : ''}>${esc(m)}</option>`).join('')}</select></label></div>
+    <div class="dos"><label>Fecha<input id="eFecha" type="date" value="${esc(x.fecha)}"></label>
+    <label>Hora<span id="eHoraCaja"></span></label></div>
+    <label>Estado<select id="eEstado">${ESTADOS.map(s => `<option${s === x.estado ? ' selected' : ''}>${s}</option>`).join('')}</select></label>
+    <label>Motivo<textarea id="eMotivo" rows="2">${esc(x.motivo)}</textarea></label>
+    <label>Notas internas <span class="opc">(no las ve el cliente)</span><textarea id="eNotas" rows="2">${esc(x.notas_internas)}</textarea></label>
+    <p id="eError" class="error" hidden></p>
+    <div class="fila-btns"><button class="btn" data-cerrar>Cancelar</button><button class="btn btn-p" id="eGuardar">Guardar cita</button></div>`;
+  const pintarHoras = () => {
+    const f = $('eFecha').value;
+    const ops = opcionesHora(f, x.id, f === c?.fecha ? x.hora : '');
+    $('eHoraCaja').innerHTML = ops.length
+      ? `<select id="eHora">${ops.map(h => `<option value="${h}"${h === x.hora ? ' selected' : ''}>${hora12(h)}</option>`).join('')}</select>`
+      : `<input id="eHora" type="time" value="${esc(x.hora)}" title="Ese día no tiene horarios libres; escribe la hora manualmente">`;
+  };
+  pintarHoras();
+  $('eFecha').onchange = pintarHoras;
+  $('eGuardar').onclick = () => {
+    const cita = {
+      id: x.id, nombre: $('eNombre').value.trim(), celular: $('eCelular').value.replace(/\D/g, ''), correo: $('eCorreo').value.trim(),
+      empresa: $('eEmpresa').value.trim(), marca: $('eMarca').value, modalidad: $('eModalidad').value, fecha: $('eFecha').value,
+      hora: $('eHora').value, estado: $('eEstado').value, motivo: $('eMotivo').value.trim(), notas_internas: $('eNotas').value.trim()
+    };
+    if (!cita.nombre || !cita.fecha || !cita.hora) { $('eError').textContent = 'Completa nombre, fecha y hora.'; $('eError').hidden = false; return; }
+    if (nueva) { cita.duracion = cfg('duracion_reserva', '90'); cita.creado = hoyGye().fecha; A.citas.push(cita); }
+    else Object.assign(c, cita);
+    enviar({ accion: 'guardarCita', pin: A.pin, cita: cita });
+    cerrarModal('modalA'); toast('Cita guardada'); renderTabCitas(); refrescarLuego();
+  };
+  abrirModal('modalA');
+}
+function cargarScript(src) {
+  return new Promise((ok, mal) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = mal; document.head.appendChild(s); });
+}
+async function descargarExcel() {
+  try {
+    if (!window.XLSX) await cargarScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+    const filas = citasFiltradas().map(c => ({
+      Fecha: c.fecha, Hora: c.hora, Nombre: c.nombre, Celular: String(c.celular || ''), Correo: c.correo, Empresa: c.empresa,
+      Marca: c.marca, Modalidad: c.modalidad, Motivo: c.motivo, Estado: c.estado, 'Notas internas': c.notas_internas, Creado: c.creado
+    }));
+    const hoja = XLSX.utils.json_to_sheet(filas);
+    const libro = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(libro, hoja, 'Citas');
+    XLSX.writeFile(libro, 'citas-' + hoyGye().fecha + '.xlsx');
+  } catch (e) { toast('No se pudo generar el Excel'); }
+}
+
+/* ---------- Imágenes ---------- */
+function comprimir(file, max, tipo, calidad) {
+  return new Promise((ok, mal) => {
+    const img = new Image(), u = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u); ok(c.toDataURL(tipo, calidad));
+    };
+    img.onerror = () => mal(new Error('No se pudo leer la imagen'));
+    img.src = u;
+  });
+}
+async function subirImagen(file, esLogo) {
+  const tipo = esLogo ? 'image/png' : 'image/jpeg';
+  const dataUrl = await comprimir(file, esLogo ? 500 : 900, tipo, .72);
+  if (MODO_DEMO) return dataUrl;
+  const res = await enviarYLeer({ accion: 'subirImagen', pin: A.pin, data: dataUrl.split(',')[1], mime: tipo, nombre: file.name.replace(/\.[^.]+$/, '') + (esLogo ? '.png' : '.jpg') });
+  if (!res.ok) throw new Error(res.error || 'No se pudo subir');
+  return res.url;
+}
+function campoImagen(idInput, valor, etiqueta, esLogo) {
+  return `<div class="img-campo">
+    <div class="img-prev" id="${idInput}Prev">${valor ? `<img src="${esc(urlSegura(valor))}" alt="">` : 'Sin imagen'}</div>
+    <div style="flex:1;min-width:200px">
+      <span class="btn btn-sm archivo">${etiqueta}<input type="file" accept="image/*" data-destino="${idInput}" data-logo="${esLogo ? '1' : ''}"></span>
+      <label style="margin:10px 0 0">O pega un enlace de imagen<input id="${idInput}" value="${esc(valor)}" placeholder="https://…"></label>
+    </div></div>`;
+}
+document.addEventListener('change', async e => {
+  const f = e.target.closest('input[type=file][data-destino]'); if (!f || !f.files[0]) return;
+  const id = f.dataset.destino, prev = $(id + 'Prev');
+  prev.textContent = 'Subiendo…';
+  try {
+    const url = await subirImagen(f.files[0], !!f.dataset.logo);
+    $(id).value = url; prev.innerHTML = `<img src="${esc(url)}" alt="">`; toast('Imagen subida');
+  } catch (x) { prev.textContent = 'Error'; toast('No se pudo subir la imagen. Inténtalo de nuevo.'); }
+  f.value = '';
+});
+document.addEventListener('input', e => {
+  const t = e.target; if (!t.id) return;
+  const prev = $(t.id + 'Prev');
+  if (prev && prev.classList.contains('img-prev')) prev.innerHTML = t.value.trim() ? `<img src="${esc(urlSegura(t.value))}" alt="">` : 'Sin imagen';
+});
+
+/* ---------- Pestaña Marcas ---------- */
+function renderTabMarcas() {
+  const marcas = ordenar(D.marcas);
+  $('tab-marcas').innerHTML = `<div class="herramientas"><button class="btn btn-p btn-sm" data-accm="nueva">Nueva marca</button>
+    <span class="suave">Las marcas se muestran en el orden indicado. Las ocultas no aparecen en la página.</span></div>
+    <div class="lista-admin">${marcas.map(m => {
+      const p = colorValido(m.color_primario, '#d4b3ef');
+      const n = D.productos.filter(x => x.marca_id === m.id).length;
+      return `<div class="item-admin">
+        <span class="muestra" style="background:${p};color:${contraste(p)}">${m.logo_url ? `<img src="${esc(urlSegura(m.logo_url))}" alt="">` : esc(iniciales(m.nombre))}</span>
+        <span class="crece"><b>${esc(m.nombre)}</b><br><span class="suave">${n === 1 ? '1 producto' : n + ' productos'}</span></span>
+        ${m.visible === 'no' ? '<span class="etiqueta">Oculta</span>' : ''}<span class="etiqueta">Orden ${esc(m.orden || '-')}</span>
+        <button class="btn btn-xs" data-accm="editar" data-id="${esc(m.id)}">Editar</button>
+        <button class="btn btn-xs btn-peligro" data-accm="eliminar" data-id="${esc(m.id)}">Eliminar</button></div>`;
+    }).join('') || '<p class="suave">Aún no hay marcas. Crea la primera con «Nueva marca».</p>'}</div>`;
+}
+$('tab-marcas').addEventListener('click', e => {
+  const b = e.target.closest('[data-accm]'); if (!b) return;
+  const m = D.marcas.find(x => x.id === b.dataset.id);
+  if (b.dataset.accm === 'nueva') editarMarca(null);
+  if (b.dataset.accm === 'editar') editarMarca(m);
+  if (b.dataset.accm === 'eliminar' && m && confirm('¿Eliminar la marca ' + m.nombre + ' y todos sus productos? Esta acción no se puede deshacer.')) {
+    D.marcas = D.marcas.filter(x => x.id !== m.id); D.productos = D.productos.filter(x => x.marca_id !== m.id);
+    enviar({ accion: 'eliminarMarca', pin: A.pin, id: m.id });
+    toast('Marca eliminada'); renderTabMarcas(); refrescarLuego();
+  }
+});
+function editarMarca(m) {
+  const nueva = !m;
+  const x = m ? Object.assign({}, m) : { id: nuevoId('M'), nombre: '', slogan: '', descripcion: '', color_primario: '#d4b3ef', color_secundario: '#2c1f36', logo_url: '', instagram: '', web: '', orden: String(D.marcas.length + 1), visible: 'si' };
+  const pintarProductos = () => {
+    const ps = ordenar(D.productos.filter(p => p.marca_id === x.id));
+    $('mProductos').innerHTML = ps.map(p => `<div class="item-admin">
+      <span class="muestra" style="background:var(--velo)">${p.imagen_url ? `<img src="${esc(urlSegura(p.imagen_url))}" alt="">` : ''}</span>
+      <span class="crece"><b>${esc(p.nombre)}</b>${p.visible === 'no' ? ' <span class="etiqueta">Oculto</span>' : ''}</span>
+      <button class="btn btn-xs" data-accp="editar" data-id="${esc(p.id)}">Editar</button>
+      <button class="btn btn-xs btn-peligro" data-accp="eliminar" data-id="${esc(p.id)}">Eliminar</button></div>`).join('') || '<p class="suave" style="margin:0">Esta marca aún no tiene productos.</p>';
+  };
+  $('modalAContenido').innerHTML = `<button class="cerrar" data-cerrar aria-label="Cerrar">×</button>
+    <h3>${nueva ? 'Nueva marca' : 'Editar marca'}</h3>
+    <label>Nombre<input id="mNombre" value="${esc(x.nombre)}"></label>
+    <label>Frase corta <span class="opc">(aparece bajo el nombre)</span><input id="mSlogan" value="${esc(x.slogan)}"></label>
+    <label>Descripción<textarea id="mDesc" rows="4">${esc(x.descripcion)}</textarea></label>
+    ${campoImagen('mLogo', x.logo_url, 'Subir logo', true)}
+    <div class="dos"><label>Color principal<input id="mColor1" type="color" value="${colorValido(x.color_primario, '#d4b3ef')}"></label>
+    <label>Color de la ficha<input id="mColor2" type="color" value="${colorValido(x.color_secundario, '#2c1f36')}"></label></div>
+    <div class="dos"><label>Instagram <span class="opc">(usuario o enlace)</span><input id="mIg" value="${esc(x.instagram)}"></label>
+    <label>Sitio web<input id="mWeb" value="${esc(x.web)}"></label></div>
+    <div class="dos"><label>Orden<input id="mOrden" type="number" min="1" value="${esc(x.orden)}"></label>
+    <label class="check" style="margin-top:30px"><input type="checkbox" id="mVisible"${x.visible !== 'no' ? ' checked' : ''}>Mostrar en la página</label></div>
+    <h3 style="margin-top:10px">Productos</h3>
+    <div class="lista-admin" id="mProductos"></div>
+    <div class="fila-btns" style="justify-content:flex-start;margin:12px 0 22px"><button class="btn btn-sm" id="mAgregarProd">Agregar producto</button></div>
+    <p id="mError" class="error" hidden></p>
+    <div class="fila-btns"><button class="btn" data-cerrar>Cancelar</button><button class="btn btn-p" id="mGuardar">Guardar marca</button></div>`;
+  pintarProductos();
+  $('mAgregarProd').onclick = () => editarProducto(null, x.id, pintarProductos);
+  $('mProductos').onclick = e => {
+    const b = e.target.closest('[data-accp]'); if (!b) return;
+    const p = D.productos.find(y => y.id === b.dataset.id); if (!p) return;
+    if (b.dataset.accp === 'editar') editarProducto(p, x.id, pintarProductos);
+    if (b.dataset.accp === 'eliminar' && confirm('¿Eliminar el producto ' + p.nombre + '?')) {
+      D.productos = D.productos.filter(y => y.id !== p.id);
+      enviar({ accion: 'eliminarProducto', pin: A.pin, id: p.id }); pintarProductos(); toast('Producto eliminado');
+    }
+  };
+  $('mGuardar').onclick = () => {
+    const marca = {
+      id: x.id, nombre: $('mNombre').value.trim(), slogan: $('mSlogan').value.trim(), descripcion: $('mDesc').value.trim(),
+      color_primario: $('mColor1').value, color_secundario: $('mColor2').value, logo_url: $('mLogo').value.trim(),
+      instagram: $('mIg').value.trim(), web: $('mWeb').value.trim(), orden: $('mOrden').value, visible: $('mVisible').checked ? 'si' : 'no'
+    };
+    if (!marca.nombre) { $('mError').textContent = 'Escribe el nombre de la marca.'; $('mError').hidden = false; return; }
+    if (nueva) D.marcas.push(marca); else Object.assign(m, marca);
+    enviar({ accion: 'guardarMarca', pin: A.pin, marca: marca });
+    cerrarModal('modalA'); toast('Marca guardada'); renderTabMarcas(); refrescarLuego();
+  };
+  abrirModal('modalA');
+}
+function editarProducto(p, marcaId, alGuardar) {
+  const nuevo = !p;
+  const x = p ? Object.assign({}, p) : { id: nuevoId('P'), marca_id: marcaId, nombre: '', descripcion: '', imagen_url: '', orden: String(D.productos.filter(y => y.marca_id === marcaId).length + 1), visible: 'si' };
+  $('modalBContenido').innerHTML = `<button class="cerrar" data-cerrar aria-label="Cerrar">×</button>
+    <h3>${nuevo ? 'Nuevo producto' : 'Editar producto'}</h3>
+    <label>Nombre<input id="pNombre" value="${esc(x.nombre)}"></label>
+    <label>Descripción corta<textarea id="pDesc" rows="2">${esc(x.descripcion)}</textarea></label>
+    ${campoImagen('pImagen', x.imagen_url, 'Subir foto', false)}
+    <div class="dos"><label>Orden<input id="pOrden" type="number" min="1" value="${esc(x.orden)}"></label>
+    <label class="check" style="margin-top:30px"><input type="checkbox" id="pVisible"${x.visible !== 'no' ? ' checked' : ''}>Mostrar en la ficha</label></div>
+    <p id="pError" class="error" hidden></p>
+    <div class="fila-btns"><button class="btn" data-cerrar>Cancelar</button><button class="btn btn-p" id="pGuardar">Guardar producto</button></div>`;
+  $('pGuardar').onclick = () => {
+    const prod = { id: x.id, marca_id: marcaId, nombre: $('pNombre').value.trim(), descripcion: $('pDesc').value.trim(), imagen_url: $('pImagen').value.trim(), orden: $('pOrden').value, visible: $('pVisible').checked ? 'si' : 'no' };
+    if (!prod.nombre) { $('pError').textContent = 'Escribe el nombre del producto.'; $('pError').hidden = false; return; }
+    if (nuevo) D.productos.push(prod); else Object.assign(p, prod);
+    enviar({ accion: 'guardarProducto', pin: A.pin, producto: prod });
+    cerrarModal('modalB'); toast('Producto guardado'); alGuardar(); renderTabMarcas();
+  };
+  abrirModal('modalB');
+}
+
+/* ---------- Pestaña Horarios ---------- */
+function renderTabHorarios() {
+  const sel = cfg('dias_atencion', '1,2,3,4,5').split(',').map(s => s.trim());
+  const bloqueos = D.bloqueos.slice().sort((a, b) => a.fecha.localeCompare(b.fecha));
+  $('tab-horarios').innerHTML = `
+    <div class="bloque-cfg"><h3>Horario de atención</h3><p>Los clientes solo ven horas que caben completas dentro de cada bloque.</p>
+      <div class="dias-check">${[1, 2, 3, 4, 5, 6, 0].map(n => `<label><input type="checkbox" data-dia="${n}"${sel.includes(String(n)) ? ' checked' : ''}>${NOMBRES_DIA[n].charAt(0).toUpperCase() + NOMBRES_DIA[n].slice(1)}</label>`).join('')}</div>
+      <div class="rejilla">
+        <label>Mañana, desde<input type="time" data-clave="hora_manana_inicio" value="${esc(cfg('hora_manana_inicio'))}"></label>
+        <label>Mañana, hasta<input type="time" data-clave="hora_manana_fin" value="${esc(cfg('hora_manana_fin'))}"></label>
+        <label>Tarde, desde<input type="time" data-clave="hora_tarde_inicio" value="${esc(cfg('hora_tarde_inicio'))}"></label>
+        <label>Tarde, hasta<input type="time" data-clave="hora_tarde_fin" value="${esc(cfg('hora_tarde_fin'))}"></label>
+      </div></div>
+    <div class="bloque-cfg"><h3>Reglas de la agenda</h3><p>Cada cita bloquea el tiempo de reserva completo. Usa lo máximo que suele durar una sesión para que no se crucen.</p>
+      <div class="rejilla">
+        <label>Tiempo reservado por cita (minutos)<input type="number" min="15" step="15" data-clave="duracion_reserva" value="${esc(cfg('duracion_reserva', '90'))}"></label>
+        <label>Ofrecer horas cada (minutos)<select data-clave="intervalo_minutos">${[15, 30, 45, 60, 90].map(n => `<option${String(n) === cfg('intervalo_minutos', '30') ? ' selected' : ''}>${n}</option>`).join('')}</select></label>
+        <label>Citas a la misma hora<input type="number" min="1" data-clave="citas_simultaneas" value="${esc(cfg('citas_simultaneas', '1'))}"></label>
+        <label>Anticipación mínima (horas)<input type="number" min="0" data-clave="anticipacion_min_horas" value="${esc(cfg('anticipacion_min_horas', '3'))}"></label>
+        <label>Mostrar días hacia adelante<input type="number" min="1" max="120" data-clave="dias_maximos" value="${esc(cfg('dias_maximos', '30'))}"></label>
+        <label>Modalidades <span class="opc">(separadas por coma)</span><input data-clave="modalidades" value="${esc(cfg('modalidades', 'Presencial,Virtual'))}"></label>
+      </div>
+      <div class="fila-btns"><button class="btn btn-p" id="hGuardar">Guardar horarios</button></div></div>
+    <div class="bloque-cfg"><h3>Fechas bloqueadas</h3><p>Feriados, ferias o días sin atención. Ese día no se podrá agendar.</p>
+      <div class="herramientas"><input type="date" id="bFecha" aria-label="Fecha"><input id="bMotivo" placeholder="Motivo (opcional)" aria-label="Motivo"><button class="btn btn-sm" id="bAgregar">Bloquear fecha</button></div>
+      <div class="lista-admin">${bloqueos.map(b => `<div class="item-admin"><span class="crece"><b>${esc(fechaLarga(b.fecha))}</b>${b.motivo ? ' <span class="suave">' + esc(b.motivo) + '</span>' : ''}</span><button class="btn btn-xs" data-desbloquear="${esc(b.fecha)}">Quitar</button></div>`).join('') || '<p class="suave" style="margin:0">No hay fechas bloqueadas.</p>'}</div></div>`;
+  $('hGuardar').onclick = () => {
+    const datos = recogerClaves('tab-horarios');
+    datos.dias_atencion = Array.from(document.querySelectorAll('#tab-horarios [data-dia]:checked')).map(c => c.dataset.dia).join(',');
+    if (!datos.dias_atencion) { toast('Elige al menos un día de atención'); return; }
+    guardarConfig(datos, 'Horarios guardados');
+  };
+  $('bAgregar').onclick = () => {
+    const f = $('bFecha').value; if (!f) { toast('Elige una fecha'); return; }
+    if (D.bloqueos.some(b => b.fecha === f)) { toast('Esa fecha ya está bloqueada'); return; }
+    const b = { fecha: f, motivo: $('bMotivo').value.trim() };
+    D.bloqueos.push(b); enviar(Object.assign({ accion: 'agregarBloqueo', pin: A.pin }, b));
+    toast('Fecha bloqueada'); renderTabHorarios(); refrescarLuego();
+  };
+  $('tab-horarios').querySelectorAll('[data-desbloquear]').forEach(btn => btn.onclick = () => {
+    const f = btn.dataset.desbloquear;
+    D.bloqueos = D.bloqueos.filter(b => b.fecha !== f); enviar({ accion: 'eliminarBloqueo', pin: A.pin, fecha: f });
+    toast('Fecha desbloqueada'); renderTabHorarios(); refrescarLuego();
+  });
+}
+function recogerClaves(contenedor) {
+  const datos = {};
+  document.querySelectorAll('#' + contenedor + ' [data-clave]').forEach(el => { datos[el.dataset.clave] = String(el.value).trim(); });
+  return datos;
+}
+function guardarConfig(datos, aviso) {
+  Object.assign(D.config, datos);
+  enviar({ accion: 'guardarConfig', pin: A.pin, config: datos });
+  aplicarTema(); renderPublico(); toast(aviso); refrescarLuego();
+}
+
+/* ---------- Pestaña Configuración ---------- */
+function renderTabConfig() {
+  const campo = (clave, etiqueta, tipo, extra) => `<label>${etiqueta}<input data-clave="${clave}" type="${tipo || 'text'}" value="${esc(cfg(clave))}" ${extra || ''}></label>`;
+  const area = (clave, etiqueta, filas) => `<label>${etiqueta}<textarea data-clave="${clave}" rows="${filas || 3}">${esc(cfg(clave))}</textarea></label>`;
+  const color = (clave, etiqueta, def) => `<label>${etiqueta}<input data-clave="${clave}" type="color" value="${colorValido(cfg(clave), def)}"></label>`;
+  $('tab-config').innerHTML = `
+    <div class="bloque-cfg"><h3>Identidad</h3><p>Lo primero que ve quien entra a la página.</p>
+      ${campo('nombre_empresa', 'Nombre de la empresa')}
+      ${campo('titular', 'Titular grande de la portada')}
+      ${area('texto_intro', 'Texto de presentación', 3)}
+      ${area('texto_nosotros', 'Sección «Quiénes somos» <span class="opc">(si la dejas vacía, no se muestra)</span>', 4)}
+      ${campoImagen('cLogo', cfg('logo_url'), 'Subir logo', true).replace('id="cLogo"', 'id="cLogo" data-clave="logo_url"')}
+    </div>
+    <div class="bloque-cfg"><h3>Colores de la página</h3><p>Tómalos del logo. Cada marca usa sus propios colores en su ficha.</p>
+      <div class="rejilla">${color('color_fondo', 'Fondo', '#1f1526')}${color('color_fondo_2', 'Fondo secundario', '#2c1f36')}${color('color_acento', 'Acento (botones)', '#d4b3ef')}${color('color_texto', 'Texto', '#f4eef7')}</div>
+    </div>
+    <div class="bloque-cfg"><h3>Contacto y ubicación</h3><p>El WhatsApp se escribe con el código de país o con 09; ambos funcionan.</p>
+      <div class="rejilla">${campo('whatsapp', 'WhatsApp del negocio', 'tel')}${campo('instagram', 'Instagram <span class="opc">(usuario o enlace)</span>')}${campo('ciudad', 'Ciudad')}</div>
+      ${campo('direccion', 'Dirección')}
+      <div class="rejilla">${campo('lat', 'Latitud', 'text', 'id="cLat"')}${campo('lng', 'Longitud', 'text', 'id="cLng"')}</div>
+      <button class="btn btn-sm" id="cUbicar">Ubicar en el mapa</button>
+    </div>
+    <div class="bloque-cfg"><h3>Avisos de nuevas citas</h3><p>Cada cita nueva llega por correo a esta dirección. Si cambia la persona encargada, cámbialo aquí.</p>
+      ${campo('correo_notificaciones', 'Correo que recibe las citas', 'email')}
+    </div>
+    <div class="bloque-cfg"><h3>Mensajes</h3><p>Puedes usar {nombre}, {fecha}, {hora}, {modalidad}, {marca} y {direccion}.</p>
+      ${area('mensaje_confirmacion_web', 'Mensaje que ve el cliente al agendar', 3)}
+      ${area('plantilla_confirmacion', 'Mensaje de confirmación para copiar y enviar por WhatsApp', 4)}
+    </div>
+    <div class="bloque-cfg"><h3>Acceso al panel</h3><p>El PIN se comprueba en tu Hoja, pero es una protección básica: no uses una clave que ya uses en otros servicios.</p>
+      ${campo('pin_admin', 'PIN del panel', 'text', 'inputmode="numeric" autocomplete="off"')}
+    </div>
+    <div class="fila-btns"><button class="btn btn-p" id="cGuardar">Guardar configuración</button></div>`;
+  $('cGuardar').onclick = () => {
+    const datos = recogerClaves('tab-config');
+    if (!datos.pin_admin) { toast('El PIN no puede quedar vacío'); return; }
+    const pinCambio = datos.pin_admin !== A.pin;
+    guardarConfig(datos, 'Configuración guardada');
+    if (pinCambio) { A.pin = datos.pin_admin; try { sessionStorage.setItem('mysense_pin', A.pin); } catch (e) {} }
+  };
+  $('cUbicar').onclick = abrirUbicar;
+}
+
+/* ---------- Mapa para ubicar el local ---------- */
+function abrirUbicar() {
+  $('modalBContenido').innerHTML = `<button class="cerrar" data-cerrar aria-label="Cerrar">×</button>
+    <h3>Ubicar en el mapa</h3><p class="suave" style="margin-top:0">Busca la dirección o toca el mapa. Puedes arrastrar el pin.</p>
+    <div class="herramientas"><input id="uBuscar" placeholder="Buscar dirección" style="flex:1"><button class="btn btn-sm" id="uIr">Buscar</button></div>
+    <div id="uMapa" class="mapa"></div>
+    <div class="fila-btns" style="margin-top:16px"><button class="btn" data-cerrar>Cancelar</button><button class="btn btn-p" id="uUsar">Usar esta ubicación</button></div>`;
+  abrirModal('modalB');
+  // El mapa se crea después de mostrar la ventana y se recrea en cada apertura
+  setTimeout(() => {
+    if (!window.L) { toast('No se pudo cargar el mapa'); return; }
+    if (mapaUbicar) { mapaUbicar.remove(); mapaUbicar = null; }
+    const lat = Number($('cLat').value) || -2.1894, lng = Number($('cLng').value) || -79.8891;
+    mapaUbicar = L.map('uMapa').setView([lat, lng], $('cLat').value ? 17 : 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(mapaUbicar);
+    const pin = L.marker([lat, lng], { draggable: true }).addTo(mapaUbicar);
+    mapaUbicar.on('click', ev => pin.setLatLng(ev.latlng));
+    setTimeout(() => mapaUbicar.invalidateSize(), 120);
+    $('uIr').onclick = async () => {
+      const q = $('uBuscar').value.trim(); if (!q) return;
+      try {
+        const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=ec&q=' + encodeURIComponent(q));
+        const j = await r.json();
+        if (j[0]) { const p = [Number(j[0].lat), Number(j[0].lon)]; mapaUbicar.setView(p, 17); pin.setLatLng(p); }
+        else toast('No se encontró esa dirección');
+      } catch (e) { toast('No se pudo buscar la dirección'); }
+    };
+    $('uUsar').onclick = () => {
+      const p = pin.getLatLng();
+      $('cLat').value = p.lat.toFixed(6); $('cLng').value = p.lng.toFixed(6);
+      cerrarModal('modalB'); toast('Ubicación lista. Pulsa «Guardar configuración».');
+    };
+  }, 60);
+}
+
+cargar();
+</script>
+</body>
+</html>
