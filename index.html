@@ -92,6 +92,31 @@ h3{font:600 20px/1.25 var(--display);margin:0 0 14px}
 .marca-slogan{display:block;font-size:15px;opacity:.78;margin-top:4px}
 
 /* Agenda */
+/* Categorías */
+.marcas-nav{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:-8px 0 20px}
+.marcas-nav:empty{display:none}
+.cat-titulo{margin:0;font-size:26px}
+.categorias{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+@media (min-width:760px){.categorias .categoria:first-child{grid-column:span 2}}
+.categoria{min-height:180px;border-radius:18px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;text-decoration:none;color:var(--texto);
+  background:color-mix(in srgb, var(--acento) var(--tono), var(--bg2));border:1px solid var(--linea);transition:transform .2s}
+a.categoria:hover{transform:translateY(-3px)}
+.cat-nombre{font:700 clamp(26px,3vw,36px)/1.05 var(--display);letter-spacing:-.02em;text-wrap:balance}
+.cat-pie{display:flex;justify-content:space-between;align-items:center;color:var(--suave);font-weight:500}
+.cat-pie span:last-child{font-size:22px;color:var(--texto)}
+.categoria.vacia{opacity:.5}
+.categoria.todas{background:transparent;border-style:dashed}
+/* Sobre nosotros y preguntas */
+.mv{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:8px}
+.mv-card{padding:26px;border-radius:18px;background:var(--velo);border:1px solid var(--linea)}
+.mv-card h3{color:var(--acento);margin-bottom:8px}
+.faq{max-width:860px}
+.faq details{border-bottom:1px solid var(--linea)}
+.faq summary{cursor:pointer;list-style:none;position:relative;padding:18px 44px 18px 0;font:600 18px/1.35 var(--cuerpo)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:6px;top:12px;font-size:26px;font-weight:400;color:var(--acento)}
+.faq details[open] summary::after{content:"−"}
+.faq p{margin:0 0 20px;color:var(--suave);max-width:70ch;white-space:pre-line}
 .agenda{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
 @media (max-width:860px){.agenda{grid-template-columns:minmax(0,1fr)}}
 .panel{min-width:0;background:var(--velo);border:1px solid var(--linea);border-radius:20px;padding:24px}
@@ -204,6 +229,7 @@ td select{margin:0;padding:6px 10px;font-size:14px;width:auto}
     <nav class="nav" aria-label="Secciones">
       <a href="#marcas">Marcas</a>
       <a href="#nosotros" id="navNosotros" hidden>Nosotros</a>
+      <a href="#preguntas" id="navPreguntas" hidden>Preguntas</a>
       <a href="#contacto">Contacto</a>
       <a href="#agenda" class="btn btn-p btn-sm">Agendar cita</a>
     </nav>
@@ -219,17 +245,21 @@ td select{margin:0;padding:6px 10px;font-size:14px;width:auto}
     <div class="acciones">
       <a href="#agenda" class="btn btn-p">Agendar una asesoría</a>
       <a href="#marcas" class="btn">Ver las marcas</a>
+      <a href="#nosotros" class="btn" id="btnNosotros" hidden>Sobre nosotros</a>
+      <a href="#preguntas" class="btn" id="btnPreguntas" hidden>Preguntas frecuentes</a>
     </div>
   </section>
 
   <section id="marcas" class="seccion">
     <div class="sec-cab"><h2>Nuestras marcas</h2><p class="suave" id="marcasConteo"></p></div>
-    <div class="mosaico" id="mosaico"></div>
+    <div class="marcas-nav" id="marcasNav"></div>
+    <div class="categorias" id="mosaico"></div>
   </section>
 
   <section id="nosotros" class="seccion" hidden>
-    <div class="sec-cab"><h2>Quiénes somos</h2></div>
+    <div class="sec-cab"><h2>Sobre nosotros</h2></div>
     <p id="nosotrosTexto" class="prosa intro"></p>
+    <div class="mv" id="misionVision"></div>
   </section>
 
   <section id="agenda" class="seccion">
@@ -262,6 +292,11 @@ td select{margin:0;padding:6px 10px;font-size:14px;width:auto}
       </form>
     </div>
     <div id="agendaListo" class="listo panel" hidden></div>
+  </section>
+
+  <section id="preguntas" class="seccion" hidden>
+    <div class="sec-cab"><h2>Preguntas frecuentes</h2></div>
+    <div class="faq" id="faqLista"></div>
   </section>
 
   <section id="contacto" class="seccion">
@@ -301,6 +336,7 @@ td select{margin:0;padding:6px 10px;font-size:14px;width:auto}
     <div class="tabs" role="tablist">
       <button class="tab activo" data-tab="citas">Citas</button>
       <button class="tab" data-tab="marcas">Marcas</button>
+      <button class="tab" data-tab="preguntas">Preguntas</button>
       <button class="tab" data-tab="horarios">Horarios</button>
       <button class="tab" data-tab="config">Configuración</button>
     </div>
@@ -310,6 +346,7 @@ td select{margin:0;padding:6px 10px;font-size:14px;width:auto}
     <section id="tab-citas"></section>
     <section id="tab-marcas" hidden></section>
     <section id="tab-horarios" hidden></section>
+    <section id="tab-preguntas" hidden></section>
     <section id="tab-config" hidden></section>
   </div>
 </div>
@@ -331,7 +368,9 @@ const DEMO = {
   config: {
     nombre_empresa: 'My Sense Ec', titular: 'Marcas para cada sentido',
     texto_intro: 'Reunimos marcas que se eligen con los sentidos. Conócelas y agenda una asesoría personalizada con nuestro equipo.',
-    texto_nosotros: '', logo_url: '', color_fondo: '#1f1526', color_fondo_2: '#2c1f36', color_acento: '#d4b3ef', color_texto: '#f4eef7',
+    texto_nosotros: '', mision: 'Acercar a nuestros clientes a las mejores casas de perfumería del mundo, con asesoría personalizada para encontrar la fragancia que expresa quiénes son.',
+    vision: 'Ser la referencia en Ecuador para descubrir perfumería de diseñador, nicho y árabe, reconocidos por la calidad de nuestra asesoría.',
+    categorias: 'Diseñador\nNicho\nÁrabe\nLujo\nExclusivos / Ediciones Limitadas', logo_url: '', color_fondo: '#1f1526', color_fondo_2: '#2c1f36', color_acento: '#d4b3ef', color_texto: '#f4eef7',
     ciudad: 'Guayaquil', direccion: '', lat: '', lng: '', whatsapp: '', instagram: '', correo_notificaciones: '', pin_admin: '1234',
     modalidades: 'Presencial,Virtual', dias_atencion: '1,2,3,4,5', hora_manana_inicio: '09:00', hora_manana_fin: '12:00',
     hora_tarde_inicio: '14:00', hora_tarde_fin: '17:30', duracion_reserva: '90', intervalo_minutos: '30', citas_simultaneas: '1',
@@ -340,13 +379,17 @@ const DEMO = {
     plantilla_confirmacion: 'Hola, {nombre}. Te saluda el equipo de My Sense Ec. Confirmamos tu cita {modalidad} para el {fecha} a las {hora}. {direccion} Si necesitas cambiar el horario, responde a este mensaje.'
   },
   marcas: [
-    { id: 'M1', nombre: 'Marca de ejemplo 1', slogan: 'Edita o elimina esta marca desde el panel', descripcion: 'Aquí va la descripción de la marca.', color_primario: '#e8a87c', color_secundario: '#3d2a1e', logo_url: '', instagram: '', web: '', orden: '1', visible: 'si' },
-    { id: 'M2', nombre: 'Marca de ejemplo 2', slogan: 'Cada marca luce sus propios colores', descripcion: 'Aquí va la descripción de la marca.', color_primario: '#8fd3c7', color_secundario: '#163a35', logo_url: '', instagram: '', web: '', orden: '2', visible: 'si' }
+    { id: 'M1', nombre: 'Marca de ejemplo 1', slogan: 'Edita o elimina esta marca desde el panel', descripcion: 'Aquí va la descripción de la marca.', color_primario: '#e8a87c', color_secundario: '#3d2a1e', logo_url: '', instagram: '', web: '', orden: '1', visible: 'si', categoria: 'Nicho' },
+    { id: 'M2', nombre: 'Marca de ejemplo 2', slogan: 'Cada marca luce sus propios colores', descripcion: 'Aquí va la descripción de la marca.', color_primario: '#8fd3c7', color_secundario: '#163a35', logo_url: '', instagram: '', web: '', orden: '2', visible: 'si', categoria: 'Diseñador, Lujo' }
   ],
-  productos: [], bloqueos: [], ocupadas: []
+  productos: [], bloqueos: [], ocupadas: [],
+  preguntas: [
+    { id: 'Q1', pregunta: '¿Cómo agendo una asesoría?', respuesta: 'Elige el día y la hora en la sección «Agenda una asesoría», completa tus datos y envía la solicitud. Te escribiremos para confirmarla.', orden: '1', visible: 'si' },
+    { id: 'Q2', pregunta: '¿Qué diferencia hay entre perfumería de diseñador y de nicho?', respuesta: 'La de diseñador la crean casas de moda y se encuentra con facilidad en tiendas. La de nicho la desarrollan casas dedicadas solo al perfume, con producciones más pequeñas y propuestas olfativas más particulares.', orden: '2', visible: 'si' }
+  ]
 };
 
-let D = { config: {}, marcas: [], productos: [], bloqueos: [], ocupadas: [] };
+let D = { config: {}, marcas: [], productos: [], bloqueos: [], ocupadas: [], preguntas: [] };
 const A = { pin: null, citas: [], filtro: 'proximas', busqueda: '', tab: 'citas' };
 let R = { fecha: null, hora: null };
 let mapaPublico = null, mapaUbicar = null;
@@ -451,7 +494,7 @@ async function enviarYLeer(obj) {
   return r.json();
 }
 function tomarDatos(j) {
-  D = { config: j.config || {}, marcas: j.marcas || [], productos: j.productos || [], bloqueos: j.bloqueos || [], ocupadas: j.ocupadas || [] };
+  D = { config: j.config || {}, marcas: j.marcas || [], productos: j.productos || [], bloqueos: j.bloqueos || [], ocupadas: j.ocupadas || [], preguntas: j.preguntas || [] };
 }
 
 async function cargar() {
@@ -492,10 +535,17 @@ function renderPublico() {
   $('titular').textContent = cfg('titular', nombre);
   $('intro').textContent = cfg('texto_intro');
   document.querySelectorAll('.nEmpresa').forEach(e => e.textContent = nombre);
-  const nos = cfg('texto_nosotros');
-  $('nosotros').hidden = !nos; $('navNosotros').hidden = !nos; $('nosotrosTexto').textContent = nos;
+  const nos = cfg('texto_nosotros'), mis = cfg('mision'), vis = cfg('vision');
+  const hayNos = !!(nos || mis || vis);
+  $('nosotros').hidden = !hayNos; $('navNosotros').hidden = !hayNos; $('btnNosotros').hidden = !hayNos;
+  $('nosotrosTexto').textContent = nos; $('nosotrosTexto').hidden = !nos;
+  $('misionVision').innerHTML = [['Misión', mis], ['Visión', vis]].filter(x => x[1])
+    .map(([t, v]) => `<div class="mv-card"><h3>${t}</h3><p class="prosa" style="margin:0">${esc(v)}</p></div>`).join('');
+  const faqs = ordenar(D.preguntas.filter(p => p.visible !== 'no' && p.pregunta));
+  $('preguntas').hidden = !faqs.length; $('navPreguntas').hidden = !faqs.length; $('btnPreguntas').hidden = !faqs.length;
+  $('faqLista').innerHTML = faqs.map(p => `<details><summary>${esc(p.pregunta)}</summary><p>${esc(p.respuesta)}</p></details>`).join('');
   $('pieTexto').textContent = '© ' + new Date().getFullYear() + ' ' + nombre;
-  renderMosaico();
+  renderMarcas();
   renderSelects();
   renderDias(); renderHoras(); renderResumen();
   renderContacto();
@@ -506,10 +556,40 @@ function marcasEnPagina() {
   const visibles = D.marcas.filter(m => m.visible !== 'no');
   return cfg('orden_marcas', 'aleatorio') === 'manual' ? ordenar(visibles) : visibles.slice().sort((a, b) => claveSorteo(a.id) - claveSorteo(b.id));
 }
-function renderMosaico() {
-  const marcas = marcasEnPagina();
-  $('marcasConteo').textContent = marcas.length ? (marcas.length === 1 ? '1 marca' : marcas.length + ' marcas') + '. Toca una para conocerla.' : '';
-  $('mosaico').innerHTML = marcas.length ? marcas.map(m => {
+const CATEGORIAS_BASE = 'Diseñador\nNicho\nÁrabe\nLujo\nExclusivos / Ediciones Limitadas';
+function listaCategorias() { return cfg('categorias', CATEGORIAS_BASE).split(/\r?\n|\|/).map(s => s.trim()).filter(Boolean); }
+function categoriasDe(m) { return String(m.categoria || '').split(',').map(s => s.trim()).filter(Boolean); }
+function slug(s) { return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+function categoriaActual() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (!h.startsWith('cat-')) return null;
+  if (h === 'cat-todas') return '__todas';
+  return listaCategorias().find(c => 'cat-' + slug(c) === h) || null;
+}
+function textoMarcas(n) { return n === 1 ? '1 marca' : n + ' marcas'; }
+function renderMarcas() {
+  const cat = categoriaActual();
+  const todas = marcasEnPagina();
+  const caja = $('mosaico');
+  if (!cat) {
+    $('marcasNav').innerHTML = '';
+    caja.className = 'categorias';
+    if (!todas.length) { $('marcasConteo').textContent = ''; caja.innerHTML = '<p class="suave">Muy pronto verás aquí nuestras marcas.</p>'; return; }
+    $('marcasConteo').textContent = 'Elige una categoría para ver sus marcas.';
+    const tonos = [30, 16, 24, 12, 36, 20];
+    caja.innerHTML = listaCategorias().map((c, i) => {
+      const n = todas.filter(m => categoriasDe(m).includes(c)).length;
+      return n
+        ? `<a class="categoria" href="#cat-${slug(c)}" style="--tono:${tonos[i % tonos.length]}%"><span class="cat-nombre">${esc(c)}</span><span class="cat-pie"><span>${textoMarcas(n)}</span><span aria-hidden="true">→</span></span></a>`
+        : `<div class="categoria vacia" style="--tono:8%"><span class="cat-nombre">${esc(c)}</span><span class="cat-pie"><span>Próximamente</span></span></div>`;
+    }).join('') + `<a class="categoria todas" href="#cat-todas"><span class="cat-nombre">Todas las marcas</span><span class="cat-pie"><span>${textoMarcas(todas.length)}</span><span aria-hidden="true">→</span></span></a>`;
+    return;
+  }
+  const marcas = cat === '__todas' ? todas : todas.filter(m => categoriasDe(m).includes(cat));
+  $('marcasNav').innerHTML = `<a class="btn btn-sm" href="#marcas">← Categorías</a><h3 class="cat-titulo">${esc(cat === '__todas' ? 'Todas las marcas' : cat)}</h3>`;
+  $('marcasConteo').textContent = marcas.length ? textoMarcas(marcas.length) + '. Toca una para ver su colección.' : '';
+  caja.className = 'mosaico';
+  caja.innerHTML = marcas.length ? marcas.map(m => {
     const p = colorValido(m.color_primario, '#d4b3ef');
     const conLogo = !!m.logo_url;
     const logo = conLogo ? `<img src="${esc(urlSegura(m.logo_url))}" alt="${esc(m.nombre)}" loading="lazy">` : `<span class="nombre-grande">${esc(m.nombre)}</span>`;
@@ -518,8 +598,13 @@ function renderMosaico() {
       <span class="marca-logo">${logo}</span>
       ${pie ? `<span>${pie}</span>` : ''}
     </button>`;
-  }).join('') : '<p class="suave">Muy pronto verás aquí nuestras marcas.</p>';
+  }).join('') : '<p class="suave">Muy pronto verás aquí las marcas de esta categoría.</p>';
 }
+window.addEventListener('hashchange', () => {
+  const enCategoria = categoriaActual();
+  renderMarcas();
+  if (enCategoria) $('marcas').scrollIntoView();
+});
 function abrirFicha(id) {
   const m = D.marcas.find(x => x.id === id); if (!m) return;
   const p = colorValido(m.color_primario, '#d4b3ef'), s = colorValido(m.color_secundario, '#222222');
@@ -531,7 +616,7 @@ function abrirFicha(id) {
       <div><h2>${esc(m.nombre)}</h2>${m.slogan ? `<p>${esc(m.slogan)}</p>` : ''}</div></div>
     <div class="ficha-cuerpo">
       ${m.descripcion ? `<p class="prosa" style="margin-top:0">${esc(m.descripcion)}</p>` : ''}
-      ${prods.length ? `<h3>Productos</h3><div class="productos">${prods.map(x => `<div class="producto">${x.imagen_url ? `<img src="${esc(urlSegura(x.imagen_url))}" alt="${esc(x.nombre)}" loading="lazy">` : ''}<div><b>${esc(x.nombre)}</b>${x.descripcion ? `<span>${esc(x.descripcion)}</span>` : ''}</div></div>`).join('')}</div>` : ''}
+      ${prods.length ? `<h3>Colección (${prods.length})</h3><div class="productos">${prods.map(x => `<div class="producto">${x.imagen_url ? `<img src="${esc(urlSegura(x.imagen_url))}" alt="${esc(x.nombre)}" loading="lazy">` : ''}<div><b>${esc(x.nombre)}</b>${x.descripcion ? `<span>${esc(x.descripcion)}</span>` : ''}</div></div>`).join('')}</div>` : '<p style="opacity:.8">Pronto publicaremos la colección de esta marca. Agenda una asesoría para conocerla.</p>'}
       <div class="ficha-acciones">
         <button type="button" class="btn btn-marca" data-agendar="${esc(m.id)}">Agendar asesoría sobre ${esc(m.nombre)}</button>
         ${ig ? `<a class="btn btn-marca-sec" href="${esc(ig)}" target="_blank" rel="noopener">Instagram</a>` : ''}
@@ -769,9 +854,9 @@ document.querySelector('.tabs').addEventListener('click', e => {
   const t = e.target.closest('[data-tab]'); if (!t) return;
   A.tab = t.dataset.tab;
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('activo', x === t));
-  ['citas', 'marcas', 'horarios', 'config'].forEach(n => $('tab-' + n).hidden = n !== A.tab);
+  ['citas', 'marcas', 'preguntas', 'horarios', 'config'].forEach(n => $('tab-' + n).hidden = n !== A.tab);
 });
-function renderAdmin() { renderTabCitas(); renderTabMarcas(); renderTabHorarios(); renderTabConfig(); }
+function renderAdmin() { renderTabCitas(); renderTabMarcas(); renderTabPreguntas(); renderTabHorarios(); renderTabConfig(); }
 function refrescarLuego() {
   if (MODO_DEMO) { renderAdmin(); return; }
   clearTimeout(refrescarLuego.t);
@@ -1027,7 +1112,7 @@ function renderTabMarcas() {
       const n = D.productos.filter(x => x.marca_id === m.id).length;
       return `<div class="item-admin">
         <span class="muestra" style="background:${p};color:${contraste(p)}">${m.logo_url ? `<img src="${esc(urlSegura(m.logo_url))}" alt="">` : esc(iniciales(m.nombre))}</span>
-        <span class="crece"><b>${esc(m.nombre)}</b><br><span class="suave">${n === 1 ? '1 producto' : n + ' productos'}</span></span>
+        <span class="crece"><b>${esc(m.nombre)}</b><br><span class="suave">${n === 1 ? '1 producto' : n + ' productos'}. ${esc(categoriasDe(m).join(', ') || 'Sin categoría')}</span></span>
         ${m.visible === 'no' ? '<span class="etiqueta">Oculta</span>' : ''}<span class="etiqueta">Orden ${esc(m.orden || '-')}</span>
         <button class="btn btn-xs" data-accm="editar" data-id="${esc(m.id)}">Editar</button>
         <button class="btn btn-xs btn-peligro" data-accm="eliminar" data-id="${esc(m.id)}">Eliminar</button></div>`;
@@ -1046,7 +1131,7 @@ $('tab-marcas').addEventListener('click', e => {
 });
 function editarMarca(m) {
   const nueva = !m;
-  const x = m ? Object.assign({}, m) : { id: nuevoId('M'), nombre: '', slogan: '', descripcion: '', color_primario: '#d4b3ef', color_secundario: '#2c1f36', logo_url: '', instagram: '', web: '', orden: String(D.marcas.length + 1), visible: 'si' };
+  const x = m ? Object.assign({}, m) : { id: nuevoId('M'), nombre: '', slogan: '', descripcion: '', categoria: '', color_primario: '#d4b3ef', color_secundario: '#2c1f36', logo_url: '', instagram: '', web: '', orden: String(D.marcas.length + 1), visible: 'si' };
   const pintarProductos = () => {
     const ps = ordenar(D.productos.filter(p => p.marca_id === x.id));
     $('mProductos').innerHTML = ps.map(p => `<div class="item-admin">
@@ -1060,6 +1145,8 @@ function editarMarca(m) {
     <label>Nombre<input id="mNombre" value="${esc(x.nombre)}"></label>
     <label>Frase corta <span class="opc">(aparece bajo el nombre)</span><input id="mSlogan" value="${esc(x.slogan)}"></label>
     <label>Descripción<textarea id="mDesc" rows="4">${esc(x.descripcion)}</textarea></label>
+    <span style="display:block;font-size:14px;font-weight:600;margin-bottom:8px">Categorías <span class="opc">(puede tener más de una)</span></span>
+    <div class="dias-check" id="mCats">${listaCategorias().map(c => `<label><input type="checkbox" value="${esc(c)}"${categoriasDe(x).includes(c) ? ' checked' : ''}>${esc(c)}</label>`).join('')}</div>
     ${campoImagen('mLogo', x.logo_url, 'Subir logo', true)}
     <div class="dos"><label>Color principal<input id="mColor1" type="color" value="${colorValido(x.color_primario, '#d4b3ef')}"></label>
     <label>Color de la ficha<input id="mColor2" type="color" value="${colorValido(x.color_secundario, '#2c1f36')}"></label></div>
@@ -1067,7 +1154,7 @@ function editarMarca(m) {
     <label>Sitio web<input id="mWeb" value="${esc(x.web)}"></label></div>
     <div class="dos"><label>Orden<input id="mOrden" type="number" min="1" value="${esc(x.orden)}"></label>
     <label class="check" style="margin-top:30px"><input type="checkbox" id="mVisible"${x.visible !== 'no' ? ' checked' : ''}>Mostrar en la página</label></div>
-    <h3 style="margin-top:10px">Productos</h3>
+    <h3 style="margin-top:10px">Colección</h3>
     <div class="lista-admin" id="mProductos"></div>
     <div class="fila-btns" style="justify-content:flex-start;margin:12px 0 22px"><button class="btn btn-sm" id="mAgregarProd">Agregar producto</button></div>
     <p id="mError" class="error" hidden></p>
@@ -1087,7 +1174,8 @@ function editarMarca(m) {
     const marca = {
       id: x.id, nombre: $('mNombre').value.trim(), slogan: $('mSlogan').value.trim(), descripcion: $('mDesc').value.trim(),
       color_primario: $('mColor1').value, color_secundario: $('mColor2').value, logo_url: $('mLogo').value.trim(),
-      instagram: $('mIg').value.trim(), web: $('mWeb').value.trim(), orden: $('mOrden').value, visible: $('mVisible').checked ? 'si' : 'no'
+      instagram: $('mIg').value.trim(), web: $('mWeb').value.trim(), orden: $('mOrden').value, visible: $('mVisible').checked ? 'si' : 'no',
+      categoria: Array.from(document.querySelectorAll('#mCats input:checked')).map(i => i.value).join(', ')
     };
     if (!marca.nombre) { $('mError').textContent = 'Escribe el nombre de la marca.'; $('mError').hidden = false; return; }
     if (nueva) D.marcas.push(marca); else Object.assign(m, marca);
@@ -1116,6 +1204,51 @@ function editarProducto(p, marcaId, alGuardar) {
     cerrarModal('modalB'); toast('Producto guardado'); alGuardar(); renderTabMarcas();
   };
   abrirModal('modalB');
+}
+
+/* ---------- Pestaña Preguntas ---------- */
+function renderTabPreguntas() {
+  const lista = ordenar(D.preguntas);
+  $('tab-preguntas').innerHTML = `<div class="herramientas"><button class="btn btn-p btn-sm" data-accq="nueva">Nueva pregunta</button>
+    <span class="suave">Se muestran en «Preguntas frecuentes» según el número de orden. Las ocultas no aparecen.</span></div>
+    <div class="lista-admin">${lista.map(p => {
+      const r = String(p.respuesta || '');
+      return `<div class="item-admin"><span class="crece"><b>${esc(p.pregunta)}</b><br><span class="suave">${esc(r.length > 120 ? r.slice(0, 120) + '…' : r)}</span></span>
+        ${p.visible === 'no' ? '<span class="etiqueta">Oculta</span>' : ''}<span class="etiqueta">Orden ${esc(p.orden || '-')}</span>
+        <button class="btn btn-xs" data-accq="editar" data-id="${esc(p.id)}">Editar</button>
+        <button class="btn btn-xs btn-peligro" data-accq="eliminar" data-id="${esc(p.id)}">Eliminar</button></div>`;
+    }).join('') || '<p class="suave">Aún no hay preguntas. Crea la primera con «Nueva pregunta».</p>'}</div>`;
+}
+$('tab-preguntas').addEventListener('click', e => {
+  const b = e.target.closest('[data-accq]'); if (!b) return;
+  const p = D.preguntas.find(x => x.id === b.dataset.id);
+  if (b.dataset.accq === 'nueva') editarPregunta(null);
+  if (b.dataset.accq === 'editar' && p) editarPregunta(p);
+  if (b.dataset.accq === 'eliminar' && p && confirm('¿Eliminar la pregunta «' + p.pregunta + '»?')) {
+    D.preguntas = D.preguntas.filter(x => x.id !== p.id);
+    enviar({ accion: 'eliminarPregunta', pin: A.pin, id: p.id });
+    toast('Pregunta eliminada'); renderTabPreguntas(); refrescarLuego();
+  }
+});
+function editarPregunta(p) {
+  const nueva = !p;
+  const x = p ? Object.assign({}, p) : { id: nuevoId('Q'), pregunta: '', respuesta: '', orden: String(D.preguntas.length + 1), visible: 'si' };
+  $('modalAContenido').innerHTML = `<button class="cerrar" data-cerrar aria-label="Cerrar">×</button>
+    <h3>${nueva ? 'Nueva pregunta' : 'Editar pregunta'}</h3>
+    <label>Pregunta<input id="qPregunta" value="${esc(x.pregunta)}"></label>
+    <label>Respuesta<textarea id="qRespuesta" rows="5">${esc(x.respuesta)}</textarea></label>
+    <div class="dos"><label>Orden<input id="qOrden" type="number" min="1" value="${esc(x.orden)}"></label>
+    <label class="check" style="margin-top:30px"><input type="checkbox" id="qVisible"${x.visible !== 'no' ? ' checked' : ''}>Mostrar en la página</label></div>
+    <p id="qError" class="error" hidden></p>
+    <div class="fila-btns"><button class="btn" data-cerrar>Cancelar</button><button class="btn btn-p" id="qGuardar">Guardar pregunta</button></div>`;
+  $('qGuardar').onclick = () => {
+    const q = { id: x.id, pregunta: $('qPregunta').value.trim(), respuesta: $('qRespuesta').value.trim(), orden: $('qOrden').value, visible: $('qVisible').checked ? 'si' : 'no' };
+    if (!q.pregunta || !q.respuesta) { $('qError').textContent = 'Escribe la pregunta y su respuesta.'; $('qError').hidden = false; return; }
+    if (nueva) D.preguntas.push(q); else Object.assign(p, q);
+    enviar({ accion: 'guardarPregunta', pin: A.pin, pregunta: q });
+    cerrarModal('modalA'); toast('Pregunta guardada'); renderTabPreguntas(); refrescarLuego();
+  };
+  abrirModal('modalA');
 }
 
 /* ---------- Pestaña Horarios ---------- */
@@ -1184,8 +1317,15 @@ function renderTabConfig() {
       ${campo('nombre_empresa', 'Nombre de la empresa')}
       ${campo('titular', 'Titular grande de la portada')}
       ${area('texto_intro', 'Texto de presentación', 3)}
-      ${area('texto_nosotros', 'Sección «Quiénes somos» <span class="opc">(si la dejas vacía, no se muestra)</span>', 4)}
       ${campoImagen('cLogo', cfg('logo_url'), 'Subir logo', true).replace('id="cLogo"', 'id="cLogo" data-clave="logo_url"')}
+    </div>
+    <div class="bloque-cfg"><h3>Sobre nosotros</h3><p>Si dejas los tres campos vacíos, la sección y su botón no aparecen.</p>
+      ${area('texto_nosotros', 'Presentación', 4)}
+      ${area('mision', 'Misión', 3)}
+      ${area('vision', 'Visión', 3)}
+    </div>
+    <div class="bloque-cfg"><h3>Categorías de marcas</h3><p>Una por línea, sin comas, en el orden en que deben aparecer. Si cambias el nombre de una, vuelve a marcarla en cada marca.</p>
+      <label>Categorías<textarea data-clave="categorias" rows="6">${esc(listaCategorias().join('\n'))}</textarea></label>
     </div>
     <div class="bloque-cfg"><h3>Marcas en la página</h3><p>En orden aleatorio, cada visitante ve las marcas en una posición distinta y la tarjeta destacada cambia.</p>
       <label>Orden de las marcas<select data-clave="orden_marcas">
@@ -1215,6 +1355,8 @@ function renderTabConfig() {
     <div class="fila-btns"><button class="btn btn-p" id="cGuardar">Guardar configuración</button></div>`;
   $('cGuardar').onclick = () => {
     const datos = recogerClaves('tab-config');
+    datos.categorias = String(datos.categorias || '').split(/\r?\n/).map(s => s.replace(/,/g, ' ').replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n');
+    if (!datos.categorias) { toast('Escribe al menos una categoría'); return; }
     if (!datos.pin_admin) { toast('El PIN no puede quedar vacío'); return; }
     const pinCambio = datos.pin_admin !== A.pin;
     guardarConfig(datos, 'Configuración guardada');
